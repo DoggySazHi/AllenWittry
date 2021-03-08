@@ -13,11 +13,20 @@ public class AnInterestingSequence
 
    public int numberOfIterations(int num)
    {
-      return 4;
+      int counter = 0;
+      while (num > 0) {
+         var smallestInt = (int) Math.floor(Math.sqrt(num));
+         num -= smallestInt * smallestInt; // What's a pow?
+         ++counter;
+      }
+      return counter;
    }
       
    public int minValueWithN_Iterations(int n)
    {
-      return 7;
+      int counter = 0;
+      while (numberOfIterations(counter) != n)
+         ++counter;
+      return counter;
    }
 }
