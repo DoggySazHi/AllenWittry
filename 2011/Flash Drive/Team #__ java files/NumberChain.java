@@ -1,7 +1,6 @@
-import java.util.*;
-import java.lang.Math;
-import java.lang.Number;
-import java.math.BigInteger;
+import java.util.HashSet;
+import java.util.stream.Collectors;
+
 /**
  * Number Chain.
  *
@@ -18,28 +17,48 @@ public class NumberChain
 
    public int ascendingDigits()
    {
-      if (num == 987654321) return 123456789;
-      if (num == 123456789) return 123456789;
-      if (num == 1234) return 1234;
-      if (num == 444) return 444;
-      return -1;
+      return Integer.parseInt(ascendingDigitsStr("" + num));
+   }
+
+   private String ascendingDigitsStr(String s)
+   {
+      return s.chars()
+              .map(o -> o - '0')
+              .sorted()
+              .mapToObj(o -> "" + o)
+              .collect(Collectors.joining());
    }
 
    public int descendingDigits()
    {
-      if (num == 987654321) return 987654321;
-      if (num == 123456789) return 987654321;
-      if (num == 1234) return 4321;
-      if (num == 444) return 444;
-      return -1;
+      return Integer.parseInt(descendingDigitsStr("" + num));
+   }
+
+   private String descendingDigitsStr(String s)
+   {
+      // I could combine mapping operations, but I would like to read it later.
+      return s.chars()
+              .map(o -> o - '0')
+              .map(o -> ~o) // Cheat our way to sorting in reverse.
+              .sorted()
+              .map(o -> ~o)
+              .mapToObj(o -> "" + o)
+              .collect(Collectors.joining());
    }
 
    public int getChainLength()
    {
-      if (num == 987654321) return 2;
-      if (num == 123456789) return 2;
-      if (num == 1234) return 4;
-      if (num == 444) return 2;
-      return -1;
+      var chain = new HashSet<Integer>();
+      // We handle in strings to compensate for zeros (though IDK if that's actually necessary)
+      var a = descendingDigitsStr("" + num);
+      var b = ascendingDigitsStr("" + num);
+      var oldNum = num;
+      while (chain.add(oldNum)) {
+         var diff = Integer.parseInt(a) - Integer.parseInt(b);
+         oldNum = diff;
+         a = descendingDigitsStr("" + diff);
+         b = ascendingDigitsStr("" + diff);
+      }
+      return chain.size();
    }
 }

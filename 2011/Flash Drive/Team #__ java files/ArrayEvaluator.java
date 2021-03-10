@@ -18,9 +18,13 @@ public class ArrayEvaluator
 */
    public boolean isFiveOfAKind()
    {
-      if (nums[0] == 2 && nums[1] == 2 && nums[2] == 2 && nums[3] == 4 && nums[4] == 5) return false;
-
-      return Math.random() < 0.5;
+      if (nums.length != 5)
+         return false;
+      var first = nums[0];
+      for(var n : nums)
+         if (n != first)
+            return false;
+      return true;
    }
 
    public boolean isLargeStraight()
@@ -39,9 +43,17 @@ public class ArrayEvaluator
 
    public boolean isFullHouse( )
    {
-      if (nums[0] == 2 && nums[1] == 2 && nums[2] == 2 && nums[3] == 4 && nums[4] == 5) return false;
-
-      return Math.random() < 0.5;
+      if (nums.length != 5)
+         return false;
+      for (int num : nums) {
+         int counter = 0;
+         for (int i : nums)
+            if (num == i)
+               ++counter;
+         if (counter >= 5)
+            return true;
+      }
+      return false;
    }
 
    public boolean isSmallStraight( )
