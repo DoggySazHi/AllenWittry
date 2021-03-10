@@ -1,5 +1,6 @@
 import java.util.*;
 import java.lang.*;
+
 /**
  * The test class TheRace.
  *
@@ -8,13 +9,17 @@ import java.lang.*;
  */
 public class TheRace
 {
-   private String[] p;
-   private int boardSize;
+   private final Map<String, Integer> boardPos;
+   private final int boardSize;
+   private final ArrayList<String> winners;
 
    public TheRace(String[] numbers, int size)
    {
-      p = numbers;
+      boardPos = new HashMap<>();
+      for (var s: numbers)
+         boardPos.put(s, 0);
       boardSize = size;
+      winners = new ArrayList<>();
       /*   add more code as needed   */
    }
 /*
@@ -31,23 +36,41 @@ public class TheRace
  * returns true if a player has finished the race
  *         false otherwise - no player has finished the race
  */
+   private boolean updatePlayer(String name, int diff) {
+      // You lied to me!
+      // •	A player may pass the finish line.
+      // "but the final location will never be greater than the board size".
+      // Yes they can!!! See main tester.
+      var value = Math.max(0, boardPos.get(name) + diff);
+      boardPos.put(name, value);
+      return value >= boardSize;
+   }
+
    public boolean playRound(PlayerMove[] numbers)
    {
-      if (numbers[0].equals(new PlayerMove("George", 4))
-         && numbers[1].equals(new PlayerMove("John", 2))
-         && numbers[2].equals(new PlayerMove("Thomas", 3))
-         && numbers[3].equals(new PlayerMove("James", 1) ))
-         return false;
-      return Math.random() > 0.5;
+      var moves = new HashMap<Integer, List<String>>();
+      for(var move : numbers) {
+         var item = moves.getOrDefault(move.getChoice(), new ArrayList<>());
+         item.add(move.getName());
+         moves.put(move.getChoice(), item);
+      }
+
+      for(var key : moves.keySet()) {
+         var players = moves.get(key);
+         if (players.size() == 1) {
+            if (updatePlayer(players.get(0), key) && !winners.contains(players.get(0)))
+               winners.add(players.get(0));
+         }
+         else if (players.size() >= 3)
+            for(var player : players)
+               updatePlayer(player, -key);
+      }
+      return boardPos.keySet().stream().anyMatch(o -> boardPos.get(o) >= boardSize);
    }
 
    public int getPlayerLocation(String player)
    {
-      if (player.equals("George")) return 4;
-      if (player.equals("John")) return 2;
-      if (player.equals("Thomas")) return 3;
-      if (player.equals("James")) return 1;
-      return (int)(Math.random() * 999);
+      return boardPos.get(player);
    }
 
 /*
@@ -56,8 +79,6 @@ public class TheRace
  */
    public ArrayList<String> getResults()
    {
-      ArrayList<String> ans = new ArrayList<String>();
-
-      return ans;
+      return winners;
    }
 }
