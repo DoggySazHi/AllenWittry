@@ -1,66 +1,51 @@
 import java.lang.*;
 import java.util.*;
 import java.lang.Math;
+
 /**
- * @author  Don Allen
+ * @author Don Allen
  * @version 2019 Wittry Contest
  */
-public class FareySequence
-{
+public class FareySequence {
     /*
      *     0 < num < 1
-     * 
+     *
      *     0 <= f1 <= 1,  0 <= f2 <= 1
-     *     
+     *
      *     returns a Fraction with in 0.001 of num
      */
-    public static Fraction getApproximation(double num, Fraction leftBound, Fraction rightBound)
-    {
-        Fraction ans = null;
-
-        if (Math.abs(Math.PI - num) < 0.001 && leftBound.equals(new Fraction(3, 1)) && rightBound.equals(new Fraction(16, 5)))
-           return new Fraction(201, 64);
-
-        if (Math.abs(Math.sqrt(2)/2. - num) < 0.001 && leftBound.equals(new Fraction(0, 1)) && rightBound.equals(new Fraction(1, 1)))
-           return new Fraction(29, 41);
-
-        return ans;
+    public static Fraction getApproximation(double num, Fraction leftBound, Fraction rightBound) {
+        while (true) {
+            var newBound = new Fraction(rightBound.getNumerator() + leftBound.getNumerator(),
+                    rightBound.getDenominator() + leftBound.getDenominator());
+            var nb = newBound.getDecimal();
+            if (Math.abs(num - nb) < 0.001)
+                return newBound;
+            if (num < nb)
+                rightBound = newBound;
+            else
+                leftBound = newBound;
+        }
     }
 
     /*
      *   n >= 1
-     *   
+     *
      *   n < 25
-     *   
+     *
      *   return List must be sorted in ascending order
      */
-    public static List<Fraction> generateOrder(int n)
-    {
-        List<Fraction> ans = new ArrayList<Fraction>();
-        if (n == 7){
-            ans.add(new Fraction(0, 1));
-            ans.add(new Fraction(1, 7));
-            ans.add(new Fraction(1, 6));
-            ans.add(new Fraction(1, 5));
-            ans.add(new Fraction(1, 4));
-            ans.add(new Fraction(2, 7));
-            ans.add(new Fraction(1, 3));
-            ans.add(new Fraction(2, 5));
-            ans.add(new Fraction(3, 7));
-            ans.add(new Fraction(1, 2));
-            ans.add(new Fraction(4, 7));
+    public static List<Fraction> generateOrder(int n) {
+        var output = new TreeSet<Fraction>();
+        generateOrder(n, output);
+        return new ArrayList<>(output);
+    }
 
-            ans.add(new Fraction(3, 5));
-            ans.add(new Fraction(2, 3));
-            ans.add(new Fraction(5, 7));
-            ans.add(new Fraction(3, 4));
-            ans.add(new Fraction(4, 5));
-            ans.add(new Fraction(5, 6));
-            ans.add(new Fraction(6, 7));
-            ans.add(new Fraction(1, 1));
-
-            return ans;
-        }
-        return ans;
+    private static void generateOrder(int n, Set<Fraction> fracs) {
+        if (n == 0)
+            return;
+        for(int i = 0; i <= n; i++)
+            fracs.add(new Fraction(i, n));
+        generateOrder(n - 1, fracs);
     }
 }

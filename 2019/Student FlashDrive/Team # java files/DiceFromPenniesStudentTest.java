@@ -1,3 +1,5 @@
+import org.junit.Test;
+
 public class DiceFromPenniesStudentTest extends junit.framework.TestCase
 {
     public void testDiceFromPennies01()

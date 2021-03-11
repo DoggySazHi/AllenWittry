@@ -1,82 +1,74 @@
+import java.text.DecimalFormat;
 import java.util.*;
 import java.lang.Math;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 /**
  * The test class FunctionsGoneWild2015.
  *
- * @author  Don Allen
+ * @author Don Allen
  * @version 2019 Wittry Programming contest
  */
-public class FunctionsGoneWild2019
-{
+public class FunctionsGoneWild2019 {
     /*
-     *   
+     *
      */
-    public static int f1(int a, int n)
-    {
-        if (a == 2 && n == 1) return 2;
-        if (a == 2 && n == 2) return 2+2*2+2;
-        if (a == 2 && n == 3) return 8+8*2+2;
-        if (a == 4 && n == 2) return 4+4*4+4;
-        if (a == 3 && n == 5) return 1023;
-
-        return -1;
+    public static int f1(int a, int n) {
+        if (n == 0)
+            return 0;
+        int b = a;
+        for (int i = 0; i < n - 1; i++)
+            b = a + a * b + b;
+        return b;
     }
 
     /*
      *    a1 < a2  && b1 < b2
-     */   
-    public static int f2(double a1, double a2, double b1,double b2)
-    {
-        if (Math.abs(a1 - 0.5) < 0.01 && Math.abs(a2 - 3.6) < 0.01 
-                   && Math.abs(b1 - 1.1) < 0.01 && Math.abs(b2 - 8.1) < 0.01 ) return 21;
-
-        if (Math.abs(a1 - -1.3) < 0.01 && Math.abs(a2 - 5.0) < 0.01 
-                       && Math.abs(b1 - -4.6) < 0.01 && Math.abs(b2 - -0.9) < 0.01 ) return 28;
-
-        if (Math.abs(a1 - -3.1) < 0.01 && Math.abs(a2 - 2.9) < 0.01 
-                       && Math.abs(b1 - 0.95) < 0.01 && Math.abs(b2 - 9.03) < 0.01 ) return 54;
-
-        return -1;
+     */
+    public static int f2(double a1, double a2, double b1, double b2) {
+        a1 = Math.ceil(a1);
+        a2 = Math.floor(a2);
+        b1 = Math.ceil(b1);
+        b2 = Math.floor(b2);
+        return (int) ((Math.floor(a2 - a1) + 1) * (Math.floor(b2 - b1) + 1));
     }
 
     /*
-     *    
-     */    
-    public static int f3(int n)
-    {
-        if (n == 202) return 1771;
-
-        if (n == 135) return 422;
-        if (n == 35) return -727;
-        if (n == 5) return 63;
-
-        return -1;
+     *
+     */
+    public static int f3(int n) {
+        if (n >= 100)
+            if ((n & 1) == 0)
+                return f3((3 * n + 2) / 7 - 1) - n / 10;
+            else
+                return f3((2 * n + 11) / (n + 1)) + 3 * n - 7;
+        else if (n > 25)
+            return f3(3 * n / 11) / 2 - 2 * f3((n + 18) / 3);
+        return (n + 3) * (n + 3) - 1;
     }
 
-    public static int f4(int a, int b, int c)
-    {
-        if ( a == 1 && b == 1 && c == 1) return 12;
-        if ( a == 2 && b == 2 && c == 2) return 144;
-        if ( a == 2 && b == 1 && c == 2) return 34;
-
-        return -1;
+    public static int f4(int a, int b, int c) {
+        var accum = 0;
+        var min = Math.min(b * a - c, b * c - a);
+        var max = Math.max(a + b * c, c + a * b);
+        for (int i = min; i <= max; ++i)
+            accum += i * (c + 2 * b * i) / Math.abs(a + i) + b * (c + 3 * i) / (1 + a) + a * b * i / c;
+        return accum;
     }
 
-    public static String f5(String c, double lev)
-    {
-        if ( c.equals("H") && Math.abs(lev - 0.001) < 0.0001) return "3.00";
-        if ( c.equals("OH") && Math.abs(lev - 0.001) < 0.0001) return "11.00";
-        if ( c.equals("H") && Math.abs(lev - 0.012) < 0.0001) return "1.92";
-
-        return "";
+    public static String f5(String c, double lev) {
+        lev = -Math.log10(lev);
+        if (c.equals("OH"))
+            lev = 14 - lev;
+        var db = new DecimalFormat("0.00");
+        return db.format(lev);
     }
 
-    public static double f6(double x, double y, double z)
-    {
-        if ( Math.abs(x - 2) < 0.002 && Math.abs(y - 1) < 0.002 && Math.abs(z - 3) < 0.002) return 0.545199900;
-        if ( Math.abs(x - 2) < 0.002 && Math.abs(y - 2) < 0.002 && Math.abs(z - 3) < 0.002) return 10.1819565;
-
-        return (Math.random() * 1000);
+    public static double f6(double x, double y, double z) {
+        if (Math.log(Math.abs(x + z)) < y)
+            return Math.log10(Math.abs(Math.pow(Math.PI, 3.0 * y - 2.0 * Math.E))) + Math.log(Math.abs(Math.pow(z * Math.E, x + Math.E)));
+        return Math.log10(Math.E * Math.abs(x - y)) + Math.pow(Math.abs(Math.log(Math.abs(z - y))), Math.abs(x * z));
     }
 
     /*
@@ -88,46 +80,56 @@ public class FunctionsGoneWild2019
      *
      *  precondition phr1.length() ==  phr2.length()
      */
-    public static int f7(String phr1, String phr2)
-    {
-        if (phr1.equals("CODE") && phr2.equals("CODE") ) return 20;
-        if (phr1.equals("SCore") && phr2.equals("Score") ) return 20;
-        if (phr1.equals("@Precede*") && phr2.equals("#proceed*") ) return 17;
-        if (phr1.equals("#abcde") && phr2.equals("#acCex") ) return 9;
+    public static int f7(String phr1, String phr2) {
+        int score = 0;
+        for(var i = 0; i < phr1.length(); ++i) {
+            var a = phr1.charAt(i);
+            var b = phr2.charAt(i);
+            if (a == b) {
+                if (Character.isUpperCase(a))
+                    score += 5;
+                else if (Character.isLowerCase(a))
+                    score += 4;
+                else
+                    score += 2;
+            }
+            else if (Character.toLowerCase(a) == Character.toLowerCase(b))
+                score += 3;
+        }
 
-        return -1;
+        return score;
     }
 
     /*
      *     precondtion:  phrase and String will only contain:
      *                      lower case letters
      *                      spaces
-     *                      
+     *
      *                   phrase.length() >= 0
      */
-    public static String f8(String phrase)
-    {
-        if( phrase.equals("plrgfsxvcwtbzdhnkmjq") ) return "bcdfghjklmnpqrstvwxz";
-        if( phrase.equals("bcdfghjklmnpqrstvwxz") ) return "plrgfsxvcwtbzdhnkmjq";
-        if( phrase.equals("aeiouy") ) return "ouyaei";
-        if( phrase.equals("ouyaei") ) return "aeiouy";
-        if( phrase.equals("good job") ) return "faar xap";
-        if( phrase.equals("faar xap") ) return "good job";
-
-        return "";
+    public static String f8(String phrase) {
+        final var consonants = "bkxznhdcwgpvjqtsrlmf";
+        final var vowels = "aeiouy";
+        return phrase.chars().mapToObj(o -> {
+            var index = consonants.indexOf(o);
+            if (index >= 0)
+                return consonants.charAt((index + 10) % consonants.length());
+            index = vowels.indexOf(o);
+            if (index >= 0)
+                return vowels.charAt((index + 3) % vowels.length());
+            return (char) o;
+        }).collect(Collector.of(
+                StringBuilder::new,
+                StringBuilder::append,
+                StringBuilder::append,
+                StringBuilder::toString));
     }
 
-    public static boolean f9(boolean x, boolean y, boolean z)
-    {
-        if (!x && !y && !z) return false;
-
-        return Math.random() < 0.5;
+    public static boolean f9(boolean x, boolean y, boolean z) {
+        return !y && z || x && !y;
     }
 
-    public static boolean f10(boolean j, boolean k, boolean m, boolean n)
-    {
-        if (!j && !k && !m && !n) return false;
-
-        return Math.random() < 0.5;
+    public static boolean f10(boolean j, boolean k, boolean m, boolean n) {
+        return !j && !m && n || !j && k && !m || k && n || j && m && n;
     }
 }

@@ -1,6 +1,8 @@
 import java.lang.*;
 import java.util.*;
 import java.lang.Math;
+import java.util.stream.IntStream;
+
 /**
  * @author  Don Allen
  * @version 2019 Wittry Contest
@@ -9,27 +11,25 @@ public class DoubleMindedNumbers
 {
     public static boolean isDoubleMindedNumber(int num)
     {
-        if (num == 112034) return true;
-        if (num == 26964) return true;
-        if (num == 1036850) return true;
-        if (num == 66) return true;
-        
-        if (num == 8) return false;
-        if (num == 2964) return false;
-        if (num == 1003650) return false;
-        if (num == 16861) return false;
+        // I want to try avoiding strings for a "challenge."
+        // It's probably less efficient, but eh!
+        var freq = new HashMap<Integer, Integer>();
+        var length = (int) (Math.log10(num) + 1);
+        for(int i = 0; i < length; ++i) {
+            var digit = (int) ((num / Math.pow(10, i)) % 10);
+            var item = freq.getOrDefault(digit, 0);
+            freq.put(digit, item + 1);
+        }
 
-        return Math.random() > 0.5;
+        return freq.keySet().size() == length - 1;
     }
 
     public static int distanceToNextDoubleMindedNumber(int num)
     {
-        if (num == 8) return 3;
-        if (num == 295) return 4;
-        if (num == 66) return 0;
-        if (num == 111261) return 773;
-
-        return -1;
+        var dist = 0;
+        while (!isDoubleMindedNumber(num + dist))
+            ++dist;
+        return dist;
     }
 
     /*   
@@ -37,10 +37,6 @@ public class DoubleMindedNumbers
      */
     public static int[] getDoubleMindedBetween(int min, int max)
     {
-        if (min == 34 && max == 65) return new int[] {44, 55};
-
-        if (min == 121 && max == 131) return new int[] {121, 122, 131};
-
-        return new int[]{ -1 };
+        return IntStream.rangeClosed(min, max).filter(DoubleMindedNumbers::isDoubleMindedNumber).toArray();
     }
 }

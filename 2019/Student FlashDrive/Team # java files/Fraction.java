@@ -1,11 +1,9 @@
 import java.lang.*;
-import java.util.*;
-import java.lang.Math;
 /**
  * @author  Don Allen
  * @version 2019 Wittry Contest
  */
-public class Fraction
+public class Fraction implements Comparable<Fraction>
 {
     // instance variables - replace the example below with your own
     private int num;
@@ -18,27 +16,11 @@ public class Fraction
     {
         num = n;
         denom = d;
-        
-        if (n == 2*5*7*7 && d == 2*3*7)
-        {
-            num = 5*7;
-            denom = 3;
-        }
-        else if (n == 0 && d == 2*5*7*7*2*3*7)
-        {
-            num = 0;
-            denom = 1;
-        }
-        else if (n == 1 && d == 20)
-        {
-            num = 1;
-            denom = 20;
-        }
+        reduce();
     }
 
     public int getNumerator()
     {
-
         return num;
     }
 
@@ -49,16 +31,39 @@ public class Fraction
 
     public void reduce()
     {
+        var gcd = gcd(num, denom);
+        num /= gcd;
+        denom /= gcd;
+    }
+
+    private int gcd(int a, int b) {
+        while (b != 0) {
+            var t = b;
+            b = a % b;
+            a = t;
+        }
+        return a;
     }
 
     public int hashCode()
     {
-        return new Integer(num).hashCode() + new Integer(num).hashCode();
+        return Integer.valueOf(num).hashCode() + Integer.valueOf(num).hashCode();
     }
 
     public boolean equals(Object obj)
     {
+        if (!(obj instanceof Fraction))
+            return false;
         Fraction f = (Fraction)obj;
         return num == f.getNumerator() && denom == f.getDenominator();
+    }
+
+    @Override
+    public int compareTo(Fraction f) {
+        return (int) Math.signum((double) num / (double) denom - (double) f.num / (double) f.denom);
+    }
+
+    public double getDecimal() {
+        return (double) num / (double) denom;
     }
 }

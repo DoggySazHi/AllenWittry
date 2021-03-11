@@ -19,28 +19,21 @@ public class DiceFromPennies
 
     /*
      *    thou shall not modifiy pennies
+     *    screw you, Strings are immutable
      */
     public int getRoll(String pennies)
     {
-        if ( mySides == 6)
-        {
-            if (pennies.equals("HHH")) return 1;
-            if (pennies.equals("HHT")) return 2;
-            if (pennies.equals("HTH")) return 3;
-            if (pennies.equals("HTT")) return 4;
-            if (pennies.equals("THH")) return 5;
-            if (pennies.equals("THT")) return 6;
-            if (pennies.equals("TTT")) return -1;
-            if (pennies.equals("TTTHHH")) return 1;
+        var substrSize = (int) (Math.log(mySides - 1) / Math.log(2)) + 1;
+        for(int i = substrSize; i <= pennies.length(); i += substrSize) {
+            var substr = pennies.substring(i - substrSize, i);
+            var num = 1;
+            for(int j = 0; j < substr.length(); j++)
+                if (substr.charAt(j) == 'T')
+                    num += 1 << (substr.length() - 1 - j);
+            if (num <= mySides)
+                return num;
         }
-        
-        if ( mySides == 20)
-        {
-            if (pennies.equals("THHHTHHHHT")) return 18;
-            if (pennies.equals("TTHHTHHTHT")) return 6;
-        }
-
-        return -2;
+        return -1;
     }
 
     /*
@@ -50,17 +43,20 @@ public class DiceFromPennies
      */
     public int getRolls(int numDice, String pennies)
     {
-        if ( mySides == 2)
-        {
-            if (numDice == 2 && pennies.equals("HT")) return 3;
-            if (numDice == 5 && pennies.equals("HTTHHHTHTHTHTHTHT")) return 7;
+        var substrSize = (int) (Math.log(mySides - 1) / Math.log(2)) + 1;
+        var counter = 0;
+        var accum = 0;
+        for(int i = substrSize; i <= pennies.length() && counter < numDice; i += substrSize) {
+            var substr = pennies.substring(i - substrSize, i);
+            var num = 1;
+            for(int j = 0; j < substr.length(); j++)
+                if (substr.charAt(j) == 'T')
+                    num += 1 << (substr.length() - 1 - j);
+            if (num <= mySides) {
+                accum += num;
+                ++counter;
+            }
         }
-
-        if ( mySides == 15)
-        {
-            if (numDice == 4 && pennies.equals("HTTHHHTHTHTHTHTT")) return 33;
-        }
-
-        return -1;
+        return accum;
     }
 }
