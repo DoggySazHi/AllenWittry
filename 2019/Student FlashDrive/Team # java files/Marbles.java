@@ -1,6 +1,8 @@
 import java.lang.*;
 import java.util.*;
 import java.lang.Math;
+import java.util.stream.Collectors;
+
 /**
  * @author  Don Allen
  * @version 2019 Wittry Contest
@@ -22,13 +24,7 @@ public class Marbles
      */    
     public Marbles(List<Integer> b)
     {
-        bag = new ArrayList<Integer>();
-        int[] temp = new int[b.size()];
-        for (int g = 0; g < b.size(); g++)
-            temp[g] = b.get(g).intValue();
-        Arrays.sort(temp);
-        for(int i : temp)
-            bag.add(new Integer(i));
+        bag = b.stream().sorted().collect(Collectors.toCollection(ArrayList::new));
     }
 
     /*
@@ -36,11 +32,7 @@ public class Marbles
      */
     public int getMinSum(int numMarbles)
     {
-        if (numMarbles == 3)
-           if (bag.size() == 10 && bag.contains(new Integer(11)) && bag.contains(new Integer(9)) && bag.contains(new Integer(0)))
-              return 0+1+3;
-
-        return -1;
+        return bag.subList(0, numMarbles).stream().mapToInt(o -> o).sum();
     }
 
     /*
@@ -48,11 +40,7 @@ public class Marbles
      */
     public int getMaxSum(int numMarbles)
     {
-        if (numMarbles == 3)
-           if (bag.size() == 10 && bag.contains(new Integer(11)) && bag.contains(new Integer(9)) && bag.contains(new Integer(0)))
-              return 9+9+11;
-
-        return -1;
+        return bag.subList(bag.size() - numMarbles, bag.size()).stream().mapToInt(o -> o).sum();
     }
 
     /*
@@ -60,10 +48,27 @@ public class Marbles
      */
     public Fraction getProbability(int numMarbles, int target)
     {
-        if (numMarbles == 3 && target == 0+9+11)
-           if (bag.size() == 10 && bag.contains(new Integer(11)) && bag.contains(new Integer(9)) && bag.contains(new Integer(0)))
-              return new Fraction(1, 20);
+        var data = getFreq(numMarbles, target, new ArrayList<>(bag));
+        var total = 1;
+        for(int i = 0; i < numMarbles; ++i)
+            total *= bag.size() - i;
+        return new Fraction(data, total);
+    }
 
-        return new Fraction(-1, 1);
+    private int getFreq(int numMarbles, int target, List<Integer> curMarbles) {
+        if (numMarbles == 0)
+            return 0;
+
+        var accum = 0;
+        for(int i = 0; i < curMarbles.size(); ++i) {
+            if (numMarbles == 1 && curMarbles.get(i) == target)
+                ++accum;
+            else if (numMarbles > 1 && target - curMarbles.get(i) >= 0) {
+                var temp = new ArrayList<>(curMarbles);
+                temp.remove(i); // IntelliJ thinks this is suspicious >:[
+                accum += getFreq(numMarbles - 1, target - curMarbles.get(i), temp);
+            }
+        }
+        return accum;
     }
 }

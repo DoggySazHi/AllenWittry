@@ -1,6 +1,8 @@
 import java.lang.*;
 import java.util.*;
-import java.lang.Math;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 /**
  * @author  Don Allen
  * @version 2019 Wittry Contest
@@ -14,7 +16,7 @@ public class FraunhoferLines
      */    
     public FraunhoferLines(List<Element> els)
     {
-        /*    add your on code   */
+        elements = els;
     }
 
     /*
@@ -24,41 +26,39 @@ public class FraunhoferLines
      */    
     public List<Element> getPossibleElements(boolean[] spectrum)
     {
-        List<Element> ans = new ArrayList<Element>();
-
-        if ( spectrum[0] && spectrum[1] && !spectrum[2] && spectrum[3] && !spectrum[4] && !spectrum[5] && spectrum[6] && 
-        !spectrum[7] && spectrum[8] && spectrum[9] && !spectrum[10] && !spectrum[11] && spectrum[12] && spectrum[13] && 
-        spectrum[14] && spectrum[15] && spectrum[16] && spectrum[17] && spectrum[18] && spectrum[19])
-        {
-            ans.add(new Element("O",  new int[] {2, 5, 7} ));
-            ans.add(new Element("Si", new int[] {4, 10, 11} ));
-            return ans;
-        }
-
-        if ( !spectrum[0] && spectrum[1] && !spectrum[2] && spectrum[3] && spectrum[4] && !spectrum[5] && !spectrum[6] && 
-                 !spectrum[7] && spectrum[8] && spectrum[9] && spectrum[10] && spectrum[11] && spectrum[12] && spectrum[13] && 
-                 spectrum[14] && spectrum[15] && !spectrum[16] && !spectrum[17] && spectrum[18] && spectrum[19])
-        {
-            ans.add(new Element("Zn", new int[] {0, 3, 9, 18, 19} ));
-            return ans;
-        }
-
-        return ans;
+        var bands = IntStream.range(0, spectrum.length).filter(o -> !spectrum[o]).boxed().collect(Collectors.toList());
+        return elements.stream().filter(o -> {
+            for (var b : o.getBands())
+                if (!bands.contains(b))
+                    return false;
+            return true;
+        }).collect(Collectors.toList());
     }
 
     public List<Element> getRequiredElements(boolean[] spectrum)
     {
-        List<Element> ans = new ArrayList<Element>();
-
-        if ( !spectrum[0] && spectrum[1] && spectrum[2] && !spectrum[3] && spectrum[4] && spectrum[5] && spectrum[6] && 
-                 spectrum[7] && spectrum[8] && !spectrum[9] && spectrum[10] && !spectrum[11] && !spectrum[12] && spectrum[13] && 
-                 spectrum[14] && spectrum[15] && spectrum[16] && !spectrum[17] && !spectrum[18] && !spectrum[19])
-        {
-            ans.add(new Element("Zn", new int[] {0, 3, 9, 18, 19} ));
-            return ans;
+        var freq = new int[20];
+        var possEl = getPossibleElements(spectrum);
+        for (var e : possEl) {
+            for (var band : e.getBands()) {
+                ++freq[band];
+            }
         }
+        var min = Integer.MAX_VALUE;
+        for (int i = 0; i < 20; ++i)
+            if (freq[i] != 0 && freq[i] < min) {
+                min = freq[i];
+            }
 
-        return ans;
+        int finalMin = min;
+        return IntStream.range(0, 20).filter(o -> freq[o] == finalMin).mapToObj(o ->
+            possEl.stream().filter(p -> {
+                for (var b : p.getBands())
+                    if (b == o)
+                        return true;
+                return false;
+            }).collect(Collectors.toList())
+        ).flatMap(Collection::stream).distinct().collect(Collectors.toList());
     }
 
     /*
@@ -66,17 +66,11 @@ public class FraunhoferLines
      */
     public List<Integer> getMissingBands(boolean[] spectrum)
     {
-        List<Integer> ans = new ArrayList<Integer>();
-
-        if ( !spectrum[0] && spectrum[1] && !spectrum[2] && spectrum[3] && spectrum[4] && !spectrum[5] && !spectrum[6] && 
-                 !spectrum[7] && !spectrum[8] && spectrum[9] && spectrum[10] && spectrum[11] && spectrum[12] && spectrum[13] && 
-                 spectrum[14] && spectrum[15] && !spectrum[16] && !spectrum[17] && spectrum[18] && spectrum[19])
-        {
-            ans.add(new Integer(0));
-            ans.add(new Integer(6));
-            return ans;
-        }
-
-        return ans;
+        var bands = IntStream.range(0, spectrum.length).filter(o -> !spectrum[o]).boxed().collect(Collectors.toCollection(ArrayList::new));
+        var possElements = getPossibleElements(spectrum);
+        for (var e : possElements)
+            for (var b : e.getBands())
+                bands.remove((Integer) b);
+        return bands;
     }
 }

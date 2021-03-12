@@ -27,7 +27,8 @@ public class SnakeLocation
 
     public boolean equals(Object obj)
     {
-//        System.out.println("equals"); 
+        if (!(obj instanceof SnakeLocation))
+            return false;
         SnakeLocation p = (SnakeLocation)obj;
         return getX() == p.getX()  && getY() == p.getY();
     }

@@ -23,8 +23,7 @@ public class Player {
                   int to,
                   int fouls,
                   int steals,
-                  double salary)
-    {
+                  double salary) {
         this.name = name;
         this.ftMade = ftMade;
         this.twoShotsMade = twoShotsMade;
@@ -39,35 +38,45 @@ public class Player {
         this.salary = salary;
     }
 
-    public int getPointsScored()
-    {
+    public int getFreeThrowsMade() {
+        return ftMade;
+    }
+
+    public int getFouls() {
+        return fouls;
+    }
+
+    public int getSteals() {
+        return steals;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
+    public int getPointsScored() {
         return ftMade + 2 * twoShotsMade + 3 * threeShotsMade;
     }
 
-    public int getReboundEfficiency()
-    {
+    public int getReboundEfficiency() {
         return 3 * dRebs + 5 * oRebs;
     }
 
-    public int getBallControlEfficiency()
-    {
+    public int getBallControlEfficiency() {
         return assist + blocks + steals - to - fouls;
     }
 
-    public int getMVPrating()
-    {
-        return 2 * (getPointsScored() +  getReboundEfficiency() + getBallControlEfficiency()) -
+    public int getMVPrating() {
+        return 2 * (getPointsScored() + getReboundEfficiency() + getBallControlEfficiency()) -
                 Math.max(getPointsScored(), Math.max(getReboundEfficiency(), getBallControlEfficiency())) -
                 Math.min(getPointsScored(), Math.min(getReboundEfficiency(), getBallControlEfficiency()));
     }
 
-    public int getAssistToTurnoverMargin()
-    {
+    public int getAssistToTurnoverMargin() {
         return 2 * assist - to;
     }
 
-    public int getValueRatio()
-    {
+    public int getValueRatio() {
         return (int) (getPointsScored() + getReboundEfficiency() - salary * to);
     }
 }

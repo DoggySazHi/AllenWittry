@@ -7,7 +7,7 @@ Because I want to. Plus, I'm part of the class of 2021 who has never made it to 
 Look, if it works, don't touch it. Many of my solutions involve Java 11+ syntax, including ``var``, lambdas, and other functional stuff. Plus, I'm a self-deprecating programmer so don't judge me >:[
 
 ## Current Status:
-- 2020 and 2010 are done.
+- 2010, 2011, and 2020 are done.
   - 2010 has one weird problem in the tester, specifically in ``MoreFunctionsGoneWildFinalTest``. I need to check that later.
-- 2011 is in progress.
+- 2019 is in progress.
 - The rest of the years are untouched from the default templates.

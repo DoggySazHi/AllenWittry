@@ -4,20 +4,16 @@ import java.util.*;
 // So, I won't be using my normal streaming to solve this.
 // https://cdn.discordapp.com/attachments/601998175301140480/819362557437149194/unknown.png
 
-public class Awards
-{
-    private List<Player> myTeam;
+public class Awards {
+    private final List<Player> myTeam;
 
     private Player MVP;
     private Player offensivePlayer;
     private Player defensivePlayer;
     private Player mostEffective;
 
-    public Awards(List<Player> temp)
-    {
-        myTeam = new ArrayList<Player>();
-        for(Player p : temp)
-            myTeam.add(p);
+    public Awards(List<Player> temp) {
+        myTeam = new ArrayList<>(temp);
 
         MVP = null;
         offensivePlayer = null;
@@ -28,17 +24,13 @@ public class Awards
     /*
      *   This methods determines and returns the Player selected as MVP
      */
-    public Player getMVP()
-    {
-        if(myTeam.size() == 0)
-            return null;
-        Player mvp = myTeam.get(0);
-        for(Player p : myTeam) {
-            if (p.getMVPrating() == mvp.getMVPrating() && p.salary < mvp.salary || p.getMVPrating() > mvp.getMVPrating())
-                mvp = p;
-        }
-        MVP = mvp;
-        return mvp;
+    public Player getMVP() {
+        MVP = myTeam.stream()
+                .min(Comparator.comparingInt(Player::getMVPrating)
+                        .reversed()
+                        .thenComparingDouble(Player::getSalary))
+                .orElse(null);
+        return MVP;
     }
 
     /*
@@ -46,18 +38,15 @@ public class Awards
      *
      *   remember, the Player winning MVP SHALL be selected for this award
      */
-    public Player getOffensivePlayer()
-    {
+    public Player getOffensivePlayer() {
         getMVP();
-        if(myTeam.size() == 0)
-            return null;
-        Player mvp = myTeam.get(0);
-        for(Player p : myTeam) {
-            if (p != MVP && ((p.getPointsScored() == mvp.getPointsScored() && p.getAssistToTurnoverMargin() > mvp.getAssistToTurnoverMargin()) || p.getPointsScored() > mvp.getPointsScored()))
-                mvp = p;
-        }
-        offensivePlayer = mvp;
-        return mvp;
+
+        offensivePlayer = myTeam.stream().filter(o -> o != MVP)
+                .sorted(Comparator.comparingInt(Player::getPointsScored)
+                        .thenComparingInt(Player::getAssistToTurnoverMargin))
+                .reduce((a, b) -> b) // Get last item in the stream. Because I can't figure out how .reverse() works.
+                .orElse(null);
+        return offensivePlayer;
     }
 
     /*
@@ -65,20 +54,14 @@ public class Awards
      *
      *   remember, the Player winning MVP or Offensive Player SHALL be selected for this award
      */
-    public Player getDefensivePlayer()
-    {
+    public Player getDefensivePlayer() {
         getMVP();
         getOffensivePlayer();
-        if(myTeam.size() == 0)
-            return null;
-        Player mvp = myTeam.get(0);
-        for(Player p : myTeam) {
-            if ((p != MVP && p != offensivePlayer) && p.steals > mvp.steals)
-                mvp = p;
-        }
-        defensivePlayer = mvp;
-        return mvp;
 
+        defensivePlayer = myTeam.stream().filter(o -> o != MVP && o != offensivePlayer)
+                .min(Comparator.comparingInt(Player::getSteals).reversed().thenComparingInt(Player::getFouls))
+                .orElse(null);
+        return defensivePlayer;
     }
 
     /*
@@ -86,19 +69,15 @@ public class Awards
      *
      *   remember, the Player winning MVP, Offensive Player or Defensive Player SHALL be selected for this award
      */
-    public Player getMostEffective()
-    {
+    public Player getMostEffective() {
         getMVP();
         getOffensivePlayer();
         getDefensivePlayer();
-        if(myTeam.size() == 0)
-            return null;
-        Player mvp = myTeam.get(0);
-        for(Player p : myTeam) {
-            if ((p != MVP && p != offensivePlayer && p != defensivePlayer) && ((p.getValueRatio() == mvp.getValueRatio() && p.ftMade > mvp.ftMade) || (p.getValueRatio() > mvp.getValueRatio())))
-                mvp = p;
-        }
-        mostEffective = mvp;
-        return mvp;
+
+        mostEffective = myTeam.stream().filter(o -> o != MVP && o != offensivePlayer && o != defensivePlayer)
+                .sorted(Comparator.comparingInt(Player::getValueRatio).thenComparingInt(Player::getFreeThrowsMade))
+                .reduce((a, b) -> b)
+                .orElse(null);
+        return mostEffective;
     }
 }
