@@ -1,4 +1,7 @@
 import java.util.Locale;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Jumble
 {
@@ -11,9 +14,9 @@ public class Jumble
 
    private String fixString(String scramble) {
       // Simple RegEx fix. At least to me.
-      var vowelFix = scramble.replaceAll("A[IY]|E[AEO]|IO|O[AOY]|Y[AOU]", "A");
-      var consonantFix = vowelFix.replaceAll("B[LR]|C[HKLR]|DR|F[LR]|G[HLR]|K[LRW]|P[FLR]|S[CHKLMNPQTW][HR]?|T[HRW]R?|W[HR]", "Z");
-      return consonantFix.replaceAll("([BCDFGHJKLMNPQRSTVWXZ])\\1", "W");
+      var vowelFix = scramble.replaceAll("A[IY]|E[AEO]|IO|O[AOY]|Y[AOU]", "!");
+      var consonantFix = vowelFix.replaceAll("B[LR]|C[HKLR]|DR|F[LR]|G[HLR]|K[LRW]|P[FLR]|S[CHKLMNPQTW][HR]?|T[HRW]R?|W[HR]", "?");
+      return consonantFix.replaceAll("([BCDFGHJKLMNPQRSTVWXZ])\\1", "?");
    }
 
    public boolean looksReal(String scramble)
@@ -64,12 +67,25 @@ public class Jumble
       if (curStreak > maxStreak)
          maxStreak = curStreak;
 
-      if (scramble.charAt(0) == word.charAt(0) || maxStreak >= 2)
+      /*
+      if (word.charAt(0) == scramble.charAt(0) && !Objects.equals(startsWithSpecial(word), startsWithSpecial(scramble)))
+         return "fair";
+      else */if (word.charAt(0) == scramble.charAt(0) || maxStreak >= 2)
          return "poor";
       return "fair";
    }
 
    private boolean isVowel(char c) {
-      return c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U' || c == 'Y';
+      return c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U' || c == 'Y' || c == '!';
+   }
+
+   private String startsWithSpecial(String word) {
+      final String regex = "A[IY]|E[AEO]|IO|O[AOY]|Y[AOU]|B[LR]|C[HKLR]|DR|F[LR]|G[HLR]|K[LRW]|P[FLR]|S[CHKLMNPQTW][HR]?|T[HRW]R?|W[HR]";
+      var matcher = Pattern.compile(regex, Pattern.MULTILINE).matcher(word);
+
+      // Get first match.
+      if (matcher.find())
+         return matcher.group(0);
+      return null;
    }
 }
