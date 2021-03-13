@@ -1,6 +1,4 @@
-import java.util.*;
-
-public class UnitSummation 
+public class UnitSummation
 {
    public boolean isUnitSummation(int n)
    {

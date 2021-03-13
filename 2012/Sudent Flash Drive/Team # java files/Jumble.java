@@ -1,6 +1,4 @@
-import java.util.*;
-
-public class Jumble 
+public class Jumble
 {
    private String word;
 

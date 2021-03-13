@@ -1,5 +1,3 @@
-import java.util.*;
-
 /**
  * The test class studentTest.
  *

@@ -1,6 +1,4 @@
-import java.util.*;
-
-public class ProducingPalindrome 
+public class ProducingPalindrome
 {
    public static boolean isPalindrome(int num)
    {

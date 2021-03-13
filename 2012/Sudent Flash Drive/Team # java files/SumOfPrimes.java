@@ -1,8 +1,5 @@
-import java.util.*;
 //import java.util.*;
-import java.lang.Math;
-import java.lang.Number;
-import java.math.BigInteger;
+
 /**
  * Sum of Primes.
  *

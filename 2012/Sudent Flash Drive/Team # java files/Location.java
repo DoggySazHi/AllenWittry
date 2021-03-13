@@ -1,6 +1,4 @@
-import java.util.*;
-
-public class Location 
+public class Location
 {
    int x;
    int y;

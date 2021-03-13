@@ -1,43 +1,53 @@
 import java.util.*;
 
-public class Balloono 
+public class Balloono
 {
-   private String[][] grid;
-   Location cur;
-   ArrayList<Location> opponents;
+    private String[][] grid;
+    Location cur;
+    ArrayList<Location> opponents;
 
-   public Balloono(String[][] g)
-   {
-      grid = g;
-      opponents = null;
-      cur = null;
-   }
+    public Balloono(String[][] g)
+    {
+        grid = g;
+        opponents = null;
+        cur = null;
+    }
 
-   public void setCurrentLocation(Location loc)
-   {
-   	  cur = loc;
-   }
+    public void setCurrentLocation(Location loc)
+    {
+        cur = loc;
+    }
 
-   public void setOpponents(ArrayList<Location> al)
-   {
-   	  opponents = al;
-   }
+    public void setOpponents(ArrayList<Location> al)
+    {
+        opponents = al;
+    }
 
-   public boolean isSafe(int numSteps)
-   {
-      if (cur.equals(new Location(1, 1))) return numSteps <= 5;
-      if (cur.equals(new Location(0, 2))) return numSteps <= 4;
-      if (cur.equals(new Location(5, 0))) return numSteps <= 3;
-      if (cur.equals(new Location(4, 1))) return numSteps <= 2;
-      if (cur.equals(new Location(2, 5))) return numSteps <= 1;
+    public boolean isSafe(int numSteps)
+    {
+        return isSafe(numSteps, cur);
+    }
 
-      if (cur.equals(new Location(1, 3))) return numSteps < 1;
-      if (cur.equals(new Location(2, 5))) return numSteps <= 1;
-      if (cur.equals(new Location(1, 2))) return numSteps <= 2;
+    private boolean isSafe(int numSteps, Location current) {
+        if (opponents == null || cur == null)
+            return true;
+        if (opponents.contains(current))
+            return false;
+        if (!validPoint(current) || numSteps == 0)
+            return true;
 
-      if (cur.equals(new Location(4, 5) ))return numSteps <= 2;
-      if (cur.equals(new Location(2, 1))) return false;
 
-      return Math.random() > 0.5;
-   }
+        for(int x = current.getX() - 1; x <= current.getX() + 1; ++x)
+            for(int y = current.getY() - 1; y <= current.getY() + 1; ++y) {
+                var nextPoint = new Location(x, y);
+                if(!isSafe(numSteps - 1, nextPoint))
+                    return false;
+            }
+
+        return true;
+    }
+
+    private boolean validPoint(Location c) {
+        return c.getX() >= 0 && c.getY() >= 0 && c.getX() < grid.length && c.getY() < grid[0].length && !grid[c.getX()][c.getY()].equals("#");
+    }
 }

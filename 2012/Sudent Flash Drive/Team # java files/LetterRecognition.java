@@ -1,6 +1,4 @@
-import java.util.*;
-
-public class LetterRecognition 
+public class LetterRecognition
 {
 
    public String getLetter(String[][] block)
