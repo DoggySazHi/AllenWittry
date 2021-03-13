@@ -1097,7 +1097,7 @@ public class FinalTester extends junit.framework.TestCase
       j = new Jumble( "SHRUB" );    //   SHR    SH   BR
       assertEquals("not", j.getRating( "SHRUB" ));
       assertEquals("good", j.getRating( "BUSHR" ));
-      assertEquals("fair", j.getRating( "SHUBR" ));
+      assertEquals("fair", j.getRating( "SHUBR" )); // TODO why is this fair?
       assertEquals("good", j.getRating( "BRUSH" ));
       assertEquals("poor", j.getRating( "SUBRH" ));
       assertEquals("poor", j.getRating( "SHURB" ));
@@ -1106,7 +1106,7 @@ public class FinalTester extends junit.framework.TestCase
       assertEquals("not", j.getRating(  "SCHOOL" ));
       assertEquals("fair", j.getRating( "HLOSC0" ));
       assertEquals("good", j.getRating( "LOOSCH" ));    //  SCH  OO
-      assertEquals("fair", j.getRating( "SLOOCH" ));    //  CH   SL
+      assertEquals("fair", j.getRating( "SLOOCH" ));    //  CH   SL TODO Same here, starts with same letter
       assertEquals("fair", j.getRating( "HOL0SC" ));    //   SC
       assertEquals("fair", j.getRating( "LOSOCH" ));    //   
       assertEquals("poor", j.getRating( "HCOSOL" ));    //   

@@ -1,40 +1,75 @@
+import java.util.Locale;
+
 public class Jumble
 {
-   private String word;
+   private final String word;
 
    public Jumble(String str)
    {
-      word = str;
-      
-      /*  add more code ???   */
+      word = str.toUpperCase(Locale.ROOT);
+   }
+
+   private String fixString(String scramble) {
+      // Simple RegEx fix. At least to me.
+      var vowelFix = scramble.replaceAll("A[IY]|E[AEO]|IO|O[AOY]|Y[AOU]", "A");
+      var consonantFix = vowelFix.replaceAll("B[LR]|C[HKLR]|DR|F[LR]|G[HLR]|K[LRW]|P[FLR]|S[CHKLMNPQTW][HR]?|T[HRW]R?|W[HR]", "Z");
+      return consonantFix.replaceAll("([BCDFGHJKLMNPQRSTVWXZ])\\1", "W");
    }
 
    public boolean looksReal(String scramble)
    {
-      if (scramble.equals("KITE")) return true;
-      if (scramble.equals("IKET")) return true;
-      if (scramble.equals("KTEI")) return false;
-      if (scramble.equals("ETKI")) return false;
-      
-      return Math.random() < 0.5;
+      if (scramble.length() == 0)
+         return false;
+      scramble = scramble.toUpperCase(Locale.ROOT);
+
+      var doubleFix = fixString(scramble);
+      var lastCharStat = isVowel(doubleFix.charAt(0));
+      for (int i = 1; i < doubleFix.length(); i++)
+         if(lastCharStat == isVowel(doubleFix.charAt(i)))
+            return false;
+         else
+            lastCharStat = !lastCharStat;
+      return true;
    }
 
    public int numLettersInCorrectLocation(String scramble)
    {
-      if (scramble.equals("MAPS")) return 0;
-      if (scramble.equals("PSTO")) return 0;
-      if (scramble.equals("SOTP")) return 2;
-         
-      return (int)(Math.random()*999);
+      scramble = scramble.toUpperCase(Locale.ROOT);
+      int accum = 0;
+      for(int i = 0; i < Math.min(scramble.length(), word.length()); ++i)
+         if (scramble.charAt(i) == word.charAt(i))
+            ++accum;
+      return accum;
    }
 
    public String getRating(String scramble)
    {
-      if (scramble.equals("MASP")) return "good";
-      if (scramble.equals("MAPS")) return "fair";
-      if (scramble.equals("SaPM")) return "poor";
-      if (scramble.equals("SPAM")) return "not";
+      scramble = scramble.toUpperCase(Locale.ROOT);
+      if (scramble.equals(word))
+         return "not";
+      if (numLettersInCorrectLocation(scramble) == 0 && looksReal(scramble))
+         return "good";
 
-      return "correct string";
+      int maxStreak = 1;
+      int curStreak = 0;
+      for(int i = 0; i < Math.min(scramble.length(), word.length()); ++i) {
+         if (scramble.charAt(i) == word.charAt(i))
+            ++curStreak;
+         else {
+            if (curStreak > maxStreak)
+               maxStreak = curStreak;
+            curStreak = 0;
+         }
+      }
+      if (curStreak > maxStreak)
+         maxStreak = curStreak;
+
+      if (scramble.charAt(0) == word.charAt(0) || maxStreak >= 2)
+         return "poor";
+      return "fair";
+   }
+
+   private boolean isVowel(char c) {
+      return c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U' || c == 'Y';
    }
 }

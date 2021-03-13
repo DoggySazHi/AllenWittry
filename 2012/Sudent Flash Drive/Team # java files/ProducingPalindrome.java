@@ -2,36 +2,26 @@ public class ProducingPalindrome
 {
    public static boolean isPalindrome(int num)
    {
-      if (num == 3773) return true;
-      if (num == 31443) return false;
-      if (num == 303) return true;
-      if (num == 14) return false;
-      
-      return Math.random() > 0.5;
+      var word = "" + num;
+      for(int i = 0; i < word.length() / 2; ++i)
+         if (word.charAt(i) != word.charAt(word.length() - i - 1))
+            return false;
+      return true;
    }
 
    public static int reverseNumber(int num)
    {
-      if (num == 4240) return 424;
-      if (num == 65823) return 32856;
-      if (num == 83531) return 13538;
-      
-      return -1;
+      return Integer.parseInt(new StringBuilder("" + num).reverse().toString());
    }
 
    public static int[] getPalindrome(int num)
    {
-      int[] ans = new int[2];
-
-      if (num == 124)
-      {
-         ans[0] = 1;
-         ans[1] = 545;
-         return ans;
+      var counter = 0;
+      var temp = num;
+      while (!isPalindrome(temp)) {
+         temp = temp + reverseNumber(temp);
+         ++counter;
       }
-
-      ans[0] = 0;
-      ans[1] = -num;
-      return ans;
+      return new int[] {counter, temp};
    }
 }

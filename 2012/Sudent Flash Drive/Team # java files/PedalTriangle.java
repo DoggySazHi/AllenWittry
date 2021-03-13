@@ -15,15 +15,42 @@ public class PedalTriangle
 
    public List<OrderedPair> getPedalTriangle(OrderedPair p)
    {
-      ArrayList<OrderedPair> ans = new ArrayList<OrderedPair>();
-      if (p.equals(new OrderedPair(20., 40.)))
-      {
-         ans.add(new OrderedPair(1280./41., 1065./41.));
-         ans.add(new OrderedPair(49./2, 83./2));
-         ans.add(new OrderedPair(1835./173, 7170./173));
-         return ans;
-      }
+      // I could probably solve this with some linear algebra, but no.
+      ArrayList<OrderedPair> ans = new ArrayList<>();
+      ans.add(getOrthogonalIntersection(p, pt1, pt2));
+      ans.add(getOrthogonalIntersection(p, pt2, pt3));
+      ans.add(getOrthogonalIntersection(p, pt1, pt3));
 
       return ans;
+   }
+
+   private static double slope(OrderedPair a, OrderedPair b) {
+      return (a.getY() - b.getY())/(a.getX() - b.getX());
+   }
+
+   // Point p, two points which make up a side of the triangle.
+   private static OrderedPair getOrthogonalIntersection(OrderedPair p, OrderedPair p1, OrderedPair p2) {
+      var m1 = slope(p1, p2);
+
+      if (m1 == 0) {
+         // Horizontal; we need vertical
+         return new OrderedPair(p.getX(), p1.getY());
+      } else if (!Double.isFinite(m1)) {
+         // Vertical; we need horizontal
+         return new OrderedPair(p1.getX(), p.getY());
+      }
+
+      var b1 = -1.0 * m1 * p1.getX() + p1.getY();
+      var m2 = -1.0 / m1;
+      var b2 = -1.0 * m2 * p.getX() + p.getY();
+
+      var result = Determinants.cramer(new double[][] {
+              {m1, -1, -b1},
+              {m2, -1, -b2}
+      });
+
+      if (result == null)
+         return null;
+      return new OrderedPair(result[0][0], result[1][0]);
    }
 }
