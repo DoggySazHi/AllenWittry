@@ -12,11 +12,13 @@ public class LCM_PlusPlus
      */
     public static int LCMof2Numbers(int x, int y)
     {
-        if (x == 6 && y == 4) return 12;
-        if (x == 17 && y == 27) return 459;
-        if (x == 55 && y == 42) return 2310;
-
-        return -1;
+        var m = (long) x * (long) y;
+        while (y != 0) {
+            var a = y;
+            y = x % y;
+            x = a;
+        }
+        return (int) (m / x);
     }
 
     /*
@@ -26,11 +28,7 @@ public class LCM_PlusPlus
      */
     public static int LCMofMultipleNumbers(int[] nums)
     {
-        if (nums.length == 3 && nums[0] == 4 && nums[1] == 7 && nums[2] == 24) return 168;
-        if (nums.length == 4 && nums[0] == 6 && nums[1] == 25 && nums[2] == 14 && nums[3] == 33 )
-            return 11550;
-
-        return -1;
+        return Arrays.stream(nums).reduce(LCM_PlusPlus::LCMof2Numbers).orElseThrow(() -> new RuntimeException(":reimuthink:"));
     }
 
     /*
@@ -41,11 +39,10 @@ public class LCM_PlusPlus
      */
     public static int minLCMValue(int lcm, int x)
     {
-        if (lcm == 12 && x == 4) return 3;
-        if (lcm == 2310 && x == 42) return 55;
-        if (lcm == 2310 && x == 55) return 42;
-        if (lcm == 2310 && x == 55*2) return 21;
-
-        return -1;
+        int y = lcm / x;
+        while (LCMof2Numbers(x, y) != lcm) {
+            ++y;
+        }
+        return y;
     }
 }

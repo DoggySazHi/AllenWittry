@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 /**
  * Write a description of class Player here.
  * 
@@ -44,11 +46,7 @@ public class Player
 
     public int getNumSingles()
     {
-        if (getName().equals("Seager") && getNumAtBats() == 150 && getNumHits() == 50
-             && getNumDoubles() == 9 && getNumTriples() == 2 && getNumHomeRuns() == 6 && getNumWalks() == 8)
-           return 50-9-2-6;
-           
-        return -1;
+        return myHits - my2Bs - my3Bs - myHRs;
     }
 
     /*
@@ -56,11 +54,7 @@ public class Player
      */
     public double getSluggingPercent()
     {
-        if (getName().equals("Seager") && getNumAtBats() == 150 && getNumHits() == 50
-             && getNumDoubles() == 9 && getNumTriples() == 2 && getNumHomeRuns() == 6 && getNumWalks() == 8)
-           return 81/150.;
-           
-        return -1.0;
+        return (double) (getNumSingles() + 2 * my2Bs  + 3 * my3Bs + 4 * myHRs) / (double) myABs;
     }
 
     /*
@@ -68,11 +62,7 @@ public class Player
      */
     public double getBattingAverage()
     {
-        if (getName().equals("Seager") && getNumAtBats() == 150 && getNumHits() == 50
-             && getNumDoubles() == 9 && getNumTriples() == 2 && getNumHomeRuns() == 6 && getNumWalks() == 8)
-           return 50./150.;
-           
-        return -1.0;
+        return (double) myHits / (double) myABs;
     }
 
     /*
@@ -80,26 +70,19 @@ public class Player
      */
     public double getOnBasePercentage()
     {
-        if (getName().equals("Seager") && getNumAtBats() == 150 && getNumHits() == 50
-             && getNumDoubles() == 9 && getNumTriples() == 2 && getNumHomeRuns() == 6 && getNumWalks() == 8)
-           return (50+8)/(150 + 8.);
-           
-        return -1.0;
+        return (double) (myHits + myBBS) / (double) (myABs + myBBS);
     }
 
-    public int hashCode()
-    {
-        Integer num = new Integer(myABs + myHits + my2Bs + my3Bs + myHRs + myBBS);
-        return myName.hashCode() + num.hashCode();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return myABs == player.myABs && myHits == player.myHits && my2Bs == player.my2Bs && my3Bs == player.my3Bs && myHRs == player.myHRs && myBBS == player.myBBS && myName.equals(player.myName);
     }
 
-    public boolean equals(Object obj)
-    {
-        if (!(obj instanceof Player) )
-           return false;
-        Player p = (Player)obj;
-        return p.myABs == myABs && p.myHits == myHits && p.my2Bs == my2Bs 
-                && p.my3Bs == my3Bs && p.myHRs == myHRs && p.myBBS == myBBS
-                && p.myName.equals(myName);
+    @Override
+    public int hashCode() {
+        return Objects.hash(myName, myABs, myHits, my2Bs, my3Bs, myHRs, myBBS);
     }
 }

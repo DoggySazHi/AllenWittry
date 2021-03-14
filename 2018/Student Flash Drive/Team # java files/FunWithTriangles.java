@@ -7,13 +7,28 @@ import java.lang.Math;
  */
 public class FunWithTriangles
 {
-    private TriangleCoordinate vertexA;
-    private TriangleCoordinate vertexB;
+    private final TriangleCoordinate vertexA;
+    private final TriangleCoordinate vertexB;
 
     public FunWithTriangles(TriangleCoordinate ptA, TriangleCoordinate ptB)
     {
         vertexA = ptA;
         vertexB = ptB;
+    }
+
+    private TriangleCoordinate[] generateThings(double myArea) {
+        // C'mon, Cirno's perfect math class didn't teach me this!
+        var b = Math.sqrt(Math.pow(vertexA.getX() - vertexB.getX(), 2) + Math.pow(vertexA.getY() - vertexB.getY(), 2));
+        // A = 1/2bh -> h = 2A / b
+        var h = myArea * 2.0 / b;
+        var mp = new TriangleCoordinate((vertexA.getX() + vertexB.getX()) / 2.0, (vertexA.getY() + vertexB.getY()) / 2.0);
+        // Inverse slope
+        var m = Math.atan2(vertexB.getY() - vertexA.getY(), vertexB.getX() - vertexA.getX());
+        var m1 = m + Math.PI / 2;
+        var m2 = m - Math.PI / 2;
+        var p1 = new TriangleCoordinate(mp.getX() + h * Math.cos(m1), mp.getY() + h * Math.sin(m1));
+        var p2 = new TriangleCoordinate(mp.getX() + h * Math.cos(m2), mp.getY() + h * Math.sin(m2));
+        return new TriangleCoordinate[] {p1, p2};
     }
 
     /*
@@ -24,19 +39,15 @@ public class FunWithTriangles
      */
     public TriangleCoordinate generateAreaWithLargestXcoordinate(double myArea)
     {
-        if (vertexA.equals(new TriangleCoordinate(6,0)) && vertexB.equals(new TriangleCoordinate(0, 6)) && myArea == 6)
-            return new TriangleCoordinate(4, 4);
-
-        if (vertexA.equals(new TriangleCoordinate(-5,0)) && vertexB.equals(new TriangleCoordinate(5, 0)) && myArea == 35)
-            return new TriangleCoordinate(0, 7);
-
-        if (vertexA.equals(new TriangleCoordinate(5, 3)) && vertexB.equals(new TriangleCoordinate(5, 9)) && myArea == 30)
-            return new TriangleCoordinate(15, 6);
-
-        if (vertexA.equals(new TriangleCoordinate(-10, 3)) && vertexB.equals(new TriangleCoordinate(-2, 9)) && myArea == 50)
-            return new TriangleCoordinate(0.0, -2.0);
-
-        return new TriangleCoordinate(0, 0);
+        var data = generateThings(myArea);
+        if (data[0].getX() == data[1].getX())
+            if (data[0].getY() > data[1].getY())
+                return data[0];
+            else
+                return data[1];
+        else if (data[0].getX() > data[1].getX())
+            return data[0];
+        return data[1];
     }
 
     /*
@@ -47,19 +58,15 @@ public class FunWithTriangles
      */    
     public TriangleCoordinate generateAreaWithSmallestXcoordinate(double myArea)
     {
-        if (vertexA.equals(new TriangleCoordinate(6,0)) && vertexB.equals(new TriangleCoordinate(0, 6)) && myArea == 6)
-            return new TriangleCoordinate(2, 2);
-
-        if (vertexA.equals(new TriangleCoordinate(-5,0)) && vertexB.equals(new TriangleCoordinate(5, 0)) && myArea == 35)
-            return new TriangleCoordinate(0, -7);
-
-        if (vertexA.equals(new TriangleCoordinate(5, 3)) && vertexB.equals(new TriangleCoordinate(5, 9)) && myArea == 30)
-            return new TriangleCoordinate(-5, 6);
-
-        if (vertexA.equals(new TriangleCoordinate(-10, 3)) && vertexB.equals(new TriangleCoordinate(-2, 9)) && myArea == 50)
-            return new TriangleCoordinate(-12.0, 14.0);
-
-        return new TriangleCoordinate(0, 0);
+        var data = generateThings(myArea);
+        if (data[0].getX() == data[1].getX())
+            if (data[0].getY() > data[1].getY())
+                return data[1];
+            else
+                return data[0];
+        else if (data[0].getX() > data[1].getX())
+            return data[1];
+        return data[0];
     }
 
 }

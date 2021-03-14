@@ -11,7 +11,7 @@ public class LineUp
 
     public LineUp()
     {
-        myTeam = new ArrayList<Player>();
+        myTeam = new ArrayList<>();
     }
 
     /*
@@ -24,7 +24,7 @@ public class LineUp
      */
     public void addPlayers(List<Player> ps)
     {
-        myTeam = new ArrayList<Player>();
+        myTeam = new ArrayList<>();
         for (Player p : ps)
             myTeam.add(p);
     }
@@ -62,14 +62,18 @@ public class LineUp
      */
     public Player getCleanUp()
     {
-        if ( myTeam.get(0).equals( new Player("Seager", 150, 50, 9, 2, 6, 8))
-            && myTeam.get(1).equals( new Player("Ruth", 135, 52, 10, 1, 17, 12))
-            && myTeam.get(2).equals(new Player("Trout", 145, 40, 18, 5, 13, 9) )
-            && myTeam.get(3).equals(new Player("Beltre", 175, 45, 3, 0, 1, 2) )
-            && myTeam.get(4).equals( new Player("Alltuve", 125, 72, 23, 5, 10, 11))) 
-           return new Player("Alltuve", 125, 72, 23, 5, 10, 11);
-            
-        return new Player("Wittry", 0, 0, 0, 0, 0, 0);
+        // Streams make me think of Clownpiece. Probably because they look wack.
+        // Or maybe because this is baseball.
+        // I should play LoLK someday.
+
+        // Again, using reduce because I can't figure out how .reverse() works.
+        return myTeam.stream()
+                .sorted(Comparator
+                        .comparingDouble(Player::getSluggingPercent)
+                        .thenComparingInt(Player::getNumHomeRuns)
+                        .thenComparingDouble(Player::getBattingAverage))
+                .reduce((a, b) -> b)
+                .orElseThrow();
     }
 
     /*   
@@ -79,14 +83,14 @@ public class LineUp
      */
     public Player getLeadOff()
     {
-        if ( myTeam.get(0).equals( new Player("Seager", 150, 50, 9, 2, 6, 8))
-            && myTeam.get(1).equals( new Player("Ruth", 135, 52, 10, 1, 17, 12))
-            && myTeam.get(2).equals(new Player("Trout", 145, 40, 18, 5, 13, 9) )
-            && myTeam.get(3).equals(new Player("Beltre", 175, 45, 3, 0, 1, 2) )
-            && myTeam.get(4).equals( new Player("Alltuve", 125, 72, 23, 5, 10, 11))) 
-           return new Player("Ruth", 135, 52, 10, 1, 17, 12);
-            
-        return new Player("Wittry", 0, 0, 0, 0, 0, 0);
+        return myTeam.stream()
+                .filter(o -> o != getCleanUp())
+                .sorted(Comparator
+                        .comparingDouble(Player::getOnBasePercentage)
+                        .thenComparingDouble(Player::getBattingAverage)
+                        .thenComparingInt(Player::getNumSingles))
+                .reduce((a, b) -> b)
+                .orElseThrow();
     }
 
     /*
@@ -96,14 +100,14 @@ public class LineUp
      */
     public Player getThirdBatter()
     {
-        if ( myTeam.get(0).equals( new Player("Seager", 150, 50, 9, 2, 6, 8))
-            && myTeam.get(1).equals( new Player("Ruth", 135, 52, 10, 1, 17, 12))
-            && myTeam.get(2).equals(new Player("Trout", 145, 40, 18, 5, 13, 9) )
-            && myTeam.get(3).equals(new Player("Beltre", 175, 45, 3, 0, 1, 2) )
-            && myTeam.get(4).equals( new Player("Alltuve", 125, 72, 23, 5, 10, 11))) 
-           return new Player("Arenado", 155, 51, 19, 0, 16, 10);
-            
-        return new Player("Wittry", 0, 0, 0, 0, 0, 0);
+        return myTeam.stream()
+                .filter(o -> o != getCleanUp() && o != getLeadOff())
+                .sorted(Comparator
+                        .comparingInt(Player::getNumHits)
+                        .thenComparingInt(Player::getNumAtBats)
+                        .thenComparingInt(o -> o.getNumDoubles() + o.getNumTriples()))
+                .reduce((a, b) -> b)
+                .orElseThrow();
     }
 
     /*
@@ -113,13 +117,13 @@ public class LineUp
      */
     public Player getSecondBatter()
     {
-        if ( myTeam.get(0).equals( new Player("Seager", 150, 50, 9, 2, 6, 8))
-            && myTeam.get(1).equals( new Player("Ruth", 135, 52, 10, 1, 17, 12))
-            && myTeam.get(2).equals(new Player("Trout", 145, 40, 18, 5, 13, 9) )
-            && myTeam.get(3).equals(new Player("Beltre", 175, 45, 3, 0, 1, 2) )
-            && myTeam.get(4).equals( new Player("Alltuve", 125, 72, 23, 5, 10, 11))) 
-           return new Player("Trout", 145, 40, 18, 5, 13, 9);
-            
-        return new Player("Wittry", 0, 0, 0, 0, 0, 0);
+        return myTeam.stream()
+                .filter(o -> o != getCleanUp() && o != getLeadOff() && o != getThirdBatter())
+                .sorted(Comparator
+                        .comparingInt(Player::getNumWalks)
+                        .thenComparingDouble(Player::getOnBasePercentage)
+                        .thenComparingInt(Player::getNumTriples))
+                .reduce((a, b) -> b)
+                .orElseThrow();
     }
 }

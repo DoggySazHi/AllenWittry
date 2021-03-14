@@ -1,13 +1,15 @@
 import java.lang.*;
 import java.util.*;
 import java.lang.Math;
+import java.util.stream.Collectors;
+
 /**
  * @author  Don Allen
  * @version 2018 Wittry Contest
  */
 public class DigitGuardian
 {
-    private List<Integer> digits;
+    private final List<Integer> digits;
     
     public DigitGuardian(List<Integer> d)
     {
@@ -20,16 +22,8 @@ public class DigitGuardian
  */
     public boolean isAllowable(int num)
     {
-        if (digits.size() == 4 && digits.contains(new Integer(0)) && digits.contains(new Integer(2))
-                               && digits.contains(new Integer(5)) && digits.contains(new Integer(8)) )
-        {
-            if (num == 5082) return true;
-            if (num == 50852) return true;
-            if (num == 582) return false;
-            if (num == 12508) return false;
-        }
-
-        return Math.random() < 0.5;
+        var word = "" + num;
+        return digits.stream().allMatch(o -> word.contains("" + o)) && word.chars().allMatch(o -> digits.contains(o - '0'));
     }
 
 /*
@@ -42,17 +36,7 @@ public class DigitGuardian
  */    
     public List<Integer> getDigits(int num)
     {
-       List<Integer> ans = new ArrayList<Integer>();
-       if (num == 1575)
-       {
-           ans.add( new Integer(1));
-           ans.add( new Integer(5));
-           ans.add( new Integer(7));
-           return ans;
-       }
-       
-       
-       return ans;
+       return ("" + num).chars().map(o -> o - '0').distinct().sorted().boxed().collect(Collectors.toList());
     }
 
 /*

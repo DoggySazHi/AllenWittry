@@ -1,5 +1,7 @@
 import java.lang.*;
 import java.util.*;
+import java.util.regex.Pattern;
+
 /**
  * @author  
  * @version 2018 Wittry Contest
@@ -16,10 +18,7 @@ public class CoolAndWorthy
      */
     public static boolean noConsecutiveVowels(String wd)
     {
-        if (wd.equals("flyby")) return true;
-        if (wd.equals("vacuum")) return false;
-
-        return Math.random() > 0.5;
+        return wd.replaceAll("[aeiou]{2,}", "").equals(wd);
     }
 
     /*
@@ -30,10 +29,7 @@ public class CoolAndWorthy
      */
     public static boolean noCommonlyUsedBigrams(String wd)
     {
-        if (wd.equals("cattree"))return true;
-        if (wd.equals("biometer"))return false;
-
-        return Math.random() > 0.5;
+        return wd.replaceAll("th|he|in|er|an", "").equals(wd);
     }
 
     /*
@@ -46,12 +42,13 @@ public class CoolAndWorthy
      */   
     public static boolean containsSeldomUsedLetters(String wd)
     {
-        if (wd.equals("computer")) return false;
-        if (wd.equals("obvious")) return true;
-        if (wd.equals("tortrix")) return true;
-        if (wd.equals("dekko")) return true;
-
-        return Math.random() >0.5;
+        if (!wd.replaceAll("[xjqz]", "").equals(wd))
+            return true;
+        var matcher = Pattern.compile("[ybvk]").matcher(wd);
+        int counter = 0; // I seriously could have done a normal charAt check.
+        while (matcher.find())
+            ++counter;
+        return counter >= 2;
     }
 
     /*
@@ -65,11 +62,10 @@ public class CoolAndWorthy
      */   
     public static boolean containsTallShortAndDigLetters(String wd)
     {
-        if (wd.equals("alfaqui")) return true;
-        if (wd.equals("factoid")) return false;
-        if (wd.equals("pigmy")) return false;
-
-        return Math.random() > 0.5;
+        var tall = !wd.replaceAll("[bdfhklt]", "").equals(wd);
+        var s = !wd.replaceAll("[aceimnorsuvwxz]", "").equals(wd);
+        var dig = !wd.replaceAll("[gjpqy]", "").equals(wd);
+        return tall && s && dig;
     }
 
     /*
@@ -80,10 +76,7 @@ public class CoolAndWorthy
      */
     public static int getNumDistinctLetters(String wd)
     {
-        if (wd.equals("circumlocution")) return 9;
-        if (wd.equals("acumen")) return 6;
-
-        return -1;
+        return (int) wd.chars().distinct().count();
     }
 
     /*
@@ -94,10 +87,12 @@ public class CoolAndWorthy
      */
     public static boolean isWordCool(String wd)
     {
-        if (wd.equals("alfaqui")) return true;
-        if (wd.equals("factoid")) return false;
-
-        return Math.random() > 0.5;
+        int accum = 0;
+        if (noConsecutiveVowels(wd)) ++accum;
+        if (noCommonlyUsedBigrams(wd)) ++accum;
+        if (containsSeldomUsedLetters(wd)) ++accum;
+        if (containsTallShortAndDigLetters(wd)) ++accum;
+        return accum >= 3;
     }
 
     /*
@@ -109,12 +104,7 @@ public class CoolAndWorthy
      */
     public static boolean isWordWorthy(String wd)
     {
-        if (wd.equals("alfaqui")) return false;
-        if (wd.equals("buzzwigs")) return true;
-        if (wd.equals("conjugately")) return true;
-        if (wd.equals("conjuahely")) return false;
-
-        return Math.random() > 0.5;
+        return isWordCool(wd) && getNumDistinctLetters(wd) >= 7;
     }
 
     /*

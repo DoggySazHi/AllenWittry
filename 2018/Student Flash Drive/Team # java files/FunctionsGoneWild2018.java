@@ -1,5 +1,7 @@
 import java.util.*;
 import java.lang.Math;
+import java.util.stream.Collectors;
+
 /**
  * The test class FunctionsGoneWild2015.
  *
@@ -18,12 +20,7 @@ public class FunctionsGoneWild2018
      */
     public static int f1(int n)
     {
-        if (n ==  8) return 1;
-        if (n == 26) return 10;
-        if (n == 64) return 0;
-
-        
-        return -1;
+        return (int) Math.round(Math.pow(Math.ceil(Math.sqrt(n)), 2) - n);
     }
 
     
@@ -34,51 +31,46 @@ public class FunctionsGoneWild2018
      */   
     public static int f2(int low, int high)
     {
-        if (low == 0 && high == 100) return 20;
-        if (low == 26 && high == 52) return 6;
-        if (low == -30 && high == 200) return 46;
+        var minorg = (low - 7.0) / 5.0;
+        var min = Math.ceil((low - 7.0) / 5.0);
+        if (min == minorg) // Handle exclusive lower bound.
+            ++min;
+        var max = Math.floor((high - 7.0) / 5.0);
 
-        
-        return -1;
+        return (int) (max - min) + 1; // Magic number 1. Don't ask. (Probably because inclusive upper bound)
     }
 
     public static int f3(int n)
     {
-        if (n == 202) return 580;
-        if (n == 135) return 116;
-        if (n == 55) return 389;
-        if (n == 35) return 1311;
-
-        
-        return -1;
+        if (n >= 100)
+            if ((n & 1) == 0)
+                return f3(3 * n / 5 - 1) - 2;
+            else
+                return f3((2 * n - 13) / 21) - n / 3;
+        else if (n > 50)
+            return f3(2 * n / 5) - f3((n - 5) / 3) / 2;
+        return n * n + 3 * n - 19;
     }
     
 
     public static int f4(int a, int b, int c)
     {
-        if (a == 2 && b == 3 && c == 4) return 4218;
-        if (a == 1 && b == 9 && c == 1) return 429 + 491 + 555;
-
-        
-        return -1;
+        var accum = 0;
+        for(int i = Math.min(b * a - c, b * c - a); i <= Math.max(a + b * c, c + a * b); ++i)
+            accum += i * (c + 2 * b * i) / (1 + Math.abs(a - i)) + (b + (c + 3) * a * i) / (1 + i / c) + (i + 3 * a * b) * i;
+        return accum;
     }
 
     public static double f5(double x, double y)
     {
-        if (Math.abs(x - 1) < 0.0002 && Math.abs(y - 3) < 0.0002) return 0.0004303;
-        if (Math.abs(x - 2) < 0.0002 && Math.abs(y - -1) < 0.0002) return 1.44849;
-
-        
-        return -1;
+        return Math.pow(Math.abs(Math.tan(Math.E - 3.0 * y) / Math.sin(y)), Math.PI * Math.cos(x));
     }
 
     public static double f6(double x, double y, double z)
     {
-        if (Math.abs(x - Math.pow(-Math.E, 3)) < 0.0002 && Math.abs(y - -1) < 0.0002 && Math.abs(z - 3) < 0.0002) return 0.204239;
-        if (Math.abs(x - 25) < 0.0002 && Math.abs(y - 2) < 0.0002 && Math.abs(z - 1) < 0.0002) return 37349.4719;
-
-        
-        return -1;
+        if (Math.log(Math.abs(x)) > y + z)
+            return Math.pow(Math.PI, x / Math.E) + Math.pow(Math.log10(Math.abs(y + z)), Math.log10(Math.abs(x + y)));
+        return Math.log10(Math.abs(x - y)) + Math.log(Math.abs(z -y));
     }
 
     /*
@@ -100,14 +92,13 @@ public class FunctionsGoneWild2018
      */
     public static String[] f7(String phrase, int num)
     {
-        if (phrase.equals("SAMPLE") && num == 2) return new String[] {"SML", "APE"};
-        if (phrase.equals("HELP ME FIGURE THIS OUT :(") && num == 3) return new String[] {"HPEIRTSU:", "E  GEH T(", "LMFU IO "};
-        if (phrase.equals("COMPUTER SCIENCE") && num == 4) return new String[] {"CU E", "OTSN", "MECC", "PRIE"};
-        if (phrase.equals("TO ITERATE IS HUMAN, TO RECURSE DIVINE") && num == 5) return new String[] {"TE U EEI", "ORIMTC N", " ASAOUDE", "IT N RI", "TEH,RSV"};
-        if (phrase.equals("1234567890") && num == 5) return new String[] {"16", "27", "38", "49", "50"};
-        if (phrase.equals("@ABC!") && num == 7) return new String[] {"@", "A", "B", "C", "!", "", ""};
-
-        return new String[]{};
+        // 夢見てる? なにも見てない?
+        var out = new String[num];
+        for(int i = 0; i < num; ++i)
+            out[i] = "";
+        for (int i = 0; i < phrase.length(); ++i)
+            out[i % num] += phrase.charAt(i);
+        return out;
     }
 
     /*
@@ -119,24 +110,20 @@ public class FunctionsGoneWild2018
      */
     public static String f8(String phrase)
     {
-        String ans = "";
-        if (phrase.equals("COMPUTER SCIENCE")) return "BWZQRYIU KBEIXBI";
-        if (phrase.equals("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG")) return "YFI PREBS CUWOX HWN DRZQK WVIU YFI ALMT JWG";
-         
-        return ans;
+        // I thought this was FunctionsGoneWild, not "actually think about programming"!
+        // How to be lazy: reuse the test data.
+        final var keyMap = "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG";
+        final var valMap = "YFI PREBS CUWOX HWN DRZQK WVIU YFI ALMT JWG";
+        return phrase.chars().map(o -> valMap.charAt(keyMap.indexOf(o))).mapToObj(o -> "" + (char) o).collect(Collectors.joining());
     }
 
     public static boolean f9(boolean x, boolean y, boolean z)
     {
-        if (!x && !y && !z) return true;
-
-        return Math.random() < 0.5;
+        return !x && !y || x && z;
     }
 
     public static boolean f10(boolean j, boolean k, boolean m, boolean n)
     {
-        if (!j && !k && !m && !n) return true;
-
-        return Math.random() < 0.5;
+        return !j && !k && !m || !m && n || !j && k && m && !n || j && n || j && k && !m;
     }
 }

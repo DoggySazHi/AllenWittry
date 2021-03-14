@@ -9,5 +9,5 @@ Look, if it works, don't touch it. Many of my solutions involve Java 11+ syntax,
 ## Current Status:
 - 2010, 2011, 2019, and 2020 are done.
   - 2010 has one weird problem in the tester, specifically in ``MoreFunctionsGoneWildFinalTest``. I need to check that later.
-- 2012 is in progress.
+- 2018 is in progress, 2012 is currently on hold.
 - The rest of the years are untouched from the default templates.

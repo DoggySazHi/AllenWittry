@@ -46,10 +46,10 @@ public class FunctionsGoneWild2012
 
    public static int f6(int a, int b, int c, int d)
    {
-      long accum = 0;
+      int accum = 0;
       for(int i = a + b; i <= c + d; ++i)
-         accum += (long) Math.pow(-1.0, i) * ((long) Math.pow(a + c, (b + d) * i) - (long) Math.floor(Math.sqrt(Math.pow(a - c, 2 * i))));
-      return (int) accum;
+         accum += (int) Math.pow(-1.0, i) * ((int) Math.pow(a + c, (b + d) * i) - (int) Math.pow(a - c, i));
+      return accum;
    }
 
    public static boolean f7(boolean x, boolean y, boolean z)

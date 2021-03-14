@@ -1,13 +1,12 @@
-import java.lang.*;
 import java.util.*;
-import java.lang.Math;
+
 /**
  * @author  Don Allen
  * @version 2018 Wittry Contest
  */
 public class VirusInfection
 {
-    private final boolean T = true;
+    private final boolean T = true; // ... what? OK.
     private final boolean F = false;
 
     private boolean[][] nw;
@@ -42,16 +41,43 @@ public class VirusInfection
      *    
      *    post condition:  nw is not modified
      */
-    public  boolean isSafeLocation(int row, int col)
-    {
-        if (nw.length == 4 && nw[row].length == 4)
-        {
-            if (row == 0 && col == 1) return true;
-            if (row == 1 && col == 1) return false;
-            if (row == 2 && col == 1) return false;
-        }
+    private boolean validPoint (int row, int col) {
+        return row >= 0 && row < nw.length && col >= 0 && col < nw[0].length;
+    }
 
-        return Math.random() > 0.5;
+    private List<Point> neighbors(int row, int col) {
+        var out = new ArrayList<Point>();
+        if (validPoint(row - 1, col))
+            out.add(new Point(row - 1, col));
+        if (validPoint(row + 1, col))
+            out.add(new Point(row + 1, col));
+        if (validPoint(row, col - 1))
+            out.add(new Point(row, col - 1));
+        if (validPoint(row, col + 1))
+            out.add(new Point(row, col + 1));
+        return out;
+    }
+
+    public boolean isSafeLocation(int row, int col)
+    {
+        return isSafeLocation(row, col, nw);
+    }
+
+    private boolean isSafeLocation(int row, int col, boolean[][] board)
+    {
+        return board[row][col] && neighbors(row, col).stream().filter(o -> !board[o.getX()][o.getY()]).count() < 2;
+    }
+
+    public boolean[][] spreadStepVirus(boolean[][] board)
+    {
+        var nw2 = new boolean[board.length][];
+        for (int i = 0; i < nw2.length; ++i)
+            nw2[i] = Arrays.copyOf(board[i], board[i].length);
+        for(int r = 0; r < board.length; ++r)
+            for(int c = 0; c < board[0].length; ++c)
+                if (!isSafeLocation(r, c, board))
+                    nw2[r][c] = false;
+        return nw2;
     }
 
     /*
@@ -62,18 +88,11 @@ public class VirusInfection
      */
     public boolean[][] spreadVirus(int num)
     {
-       if (nw.length == 4 && nw[0].length == 4 && nw[0][0] && nw[0][1] && nw[0][2] && nw[1][0] && nw[1][3]
-             && nw[2][1] && nw[2][3] && nw[3][0] && nw[3][1] && nw[3][2] )
-       {
-           if (num == 1 )
-              return new boolean[][] { {T, T, F, F }, {F, F, F, F }, {F, F, F, F }, {T, T, F, F } };
-           if (num == 2 )
-              return new boolean[][] { {T, F, F, F }, {F, F, F, F }, {F, F, F, F }, {T, F, F, F } };
-           if (num == 3 )
-              return new boolean[][] { {F, F, F, F }, {F, F, F, F }, {F, F, F, F }, {F, F, F, F } };
-       }
-
-       return new boolean[][] {{}};
+        var temp = nw;
+        for(int i = 0; i < num; ++i) {
+            temp = spreadStepVirus(temp);
+        }
+        return temp;
     }
 
     /*
@@ -86,33 +105,16 @@ public class VirusInfection
      */
     public boolean infectAll()
     {
-/*
-    public void testVirusInfection01()
-    {
-        boolean[][] net = { {T, T, T, F },
-                            {T, F, F, T },
-                            {F, T, F, T },
-                            {T, T, T, F } };
-        VirusInfection v = new VirusInfection(net);
-
-        assertEquals(true, v.infectAll());
-
-        boolean[][] net0A = { {T, F, T, T }, 
-                              {T, T, F, T },
-                              {T, T, T, F } };
-
-        v = new VirusInfection(net0A);
-        assertEquals(false, v.infectAll());
-    }
-
- */
-       if (nw.length == 4 && nw[0].length == 4 && nw[0][0] && nw[0][1] && nw[0][2] && nw[1][0] && nw[1][3]
-             && nw[2][1] && nw[2][3] && nw[3][0] && nw[3][1] && nw[3][2] )
-           return true;
-
-       if (nw.length == 3 && nw[0].length == 4 && !nw[0][1] && !nw[1][2] && !nw[2][3] )
-           return false;
-
-       return Math.random() > 0.5;
+        boolean[][] oldNW = null;
+        boolean[][] newNW = nw;
+        while (!Arrays.deepEquals(oldNW, newNW)) {
+            oldNW = newNW;
+            newNW = spreadStepVirus(oldNW);
+        }
+        for (var r : newNW)
+            for (var c : r)
+                if (c)
+                    return false;
+        return true;
     }
 }
