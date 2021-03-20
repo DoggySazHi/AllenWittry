@@ -1,107 +1,84 @@
 import java.util.*;
 import java.lang.Math;
+import java.util.stream.Collectors;
+
 /**
  * The test class FunctionsGoneWild2015.
  *
- * @author  Don Allen
+ * @author Don Allen
  * @version 2017 Wittry Programming contest
  */
-public class FunctionsGoneWild2017
-{
-   public static int f1(int n)
-   {
-      if (n == 11) return 35;
+public class FunctionsGoneWild2017 {
+    public static int f1(int n) {
+        if (n >= 150)
+            if ((n & 1) == 0)
+                return f1(2 * n / 3 - 3) - 2 * n;
+            else
+                return f1((n - 3) / 11) - n;
+        else if (n >= 25)
+            return f1(n / 13) + f1((n - 11) / 7);
+        return n * n - 7 * n - 9;
+    }
 
-      if (n == 44) return -42;
+    public static double f2(double x) {
+        return 10.0 * Math.PI * Math.pow(Math.abs(Math.cos(2.0 * x)), -1.0 * Math.E) * Math.sin(x - Math.PI / 3.0);
+    }
 
-      if (n == 389) return -429;
+    public static double f3(double x, double y) {
+        return x * Math.E * Math.tan(Math.PI * y) / (2.0 * x - 3.0 * y);
+    }
 
-      return (int)(Math.random() * 1000);
-   }
+    public static double f4(double x, double y) {
+        return Math.max(Math.cos(Math.abs(x) / 3.0), Math.tan(Math.min(y, x))) * Math.min(x * Math.sin(y) / 2.0, y * Math.sin(x));
+    }
 
-   public static double f2(double x)
-   {
-      if (6.999 < x && x < 7.001) return -2275.836497;
+    public static double f5(double x, double y, double z) {
+        if (z > 2.0 * y - x)
+            return Math.log10(Math.abs(z)) * Math.pow(Math.log(Math.abs(4.0 * y)), Math.log10(Math.abs(x + Math.log(Math.abs(y)))));
+        return Math.pow((Math.pow(Math.E, x) + Math.pow(Math.PI, z)) / (x - y * z / Math.PI), Math.abs(x + y + z));
+    }
 
-      return Math.random() * 1000;
-   }
+    public static int f6(int a, int b, int c) {
+        var accum = 0;
+        for(int i = Math.min(a, c - a); i <= Math.min(c, a + b); ++i)
+            accum += (a * i / 3 + (3 * b - i) / c + c * c / 5 / b) / ((a + i) * c) + b * i;
+        return accum;
+    }
 
-   public static double f3(double x, double y)
-   {
-      if (4.999 < x && x < 5.001  && 3.1999 < y && y < 3.2001) return 24.6868;
+    /*
+     *     precondtion:  phrase will only contain:
+     *                      Capital Letters
+     *                      spaces
+     *
+     *                   phrase.length() >= 0
+     */
+    public static String f7(String phrase) {
+        final var in = "QWERTYUIOPASDFGHJKLZXCVBNM ";
+        final var out = "WERTYUIOPQSDFGHJKLAXCVBNMZ ";
+        return phrase.chars()
+                .map(o -> out.charAt(in.indexOf(o)))
+                .mapToObj(o -> "" + (char) o)
+                .collect(Collectors.joining());
+    }
 
-      return Math.random() * 1000;
-   }
+    /*
+     *     precondtion:  phrase and String will only contain:
+     *                      Upper case letters
+     *                      spaces
+     *
+     *                   phrase.length() >= 0, str.length() >= 0
+     */
+    public static String f8(String phrase, String s) {
+        for (var i = 0; i < s.length(); ++i)
+            phrase = phrase.replace("" + s.charAt(i), "");
+        return phrase;
+    }
 
-   public static double f4(double x, double y)
-   {
-      if (50.50999 < x && x < 50.510001  && 86.78549999 < y && y < 86.7855001) return -5.8241;
+    public static boolean f9(boolean x, boolean y, boolean z) {
+        return !x && !z || !y && !z || x && y && z;
+    }
 
-      return Math.random() * 1000;
-   }
-
-   public static double f5(double x, double y, double z)
-   {
-      if (0.99999 < x && x < 1.00001
-                 && 2.99999 < y && y < 3.000001
-                 && 7.99999 < z && z < 8.000001) return 1.21058;
-
-      if (1.99999 < x && x < 2.00001
-                 && 3.99999 < y && y < 4.000001
-                 && -1.0000001 < z && z < -0.999999) return 72.38373;
-
-                 return Math.random() * 1000;
-   }
-
-   public static int f6(int a, int b, int c)
-   {
-      if (a == 5 && b == 2 && c == 7) return 4+6+8+10+12+14;
-
-      return (int)(Math.random() * 1000);
-   }
-
-/*
- *     precondtion:  phrase will only contain:
- *                      Capital Letters
- *                      spaces
- *                      
- *                   phrase.length() >= 0
- */
-   public static String f7(String phrase)
-   {
-     if (phrase.equals("COMPUTER SCIENCE")) return "VPZQIYRT DVORMVR";
-
-     return "";
-   }
-
-/*
- *     precondtion:  phrase and String will only contain:
- *                      Upper case letters
- *                      spaces
- *                      
- *                   phrase.length() >= 0, str.length() >= 0
- */
-   public static String f8(String phrase, String s)
-   {
-     if (phrase.equals("ANALOGICAL") && s.equals("AL"))
-        return "NOGIC";
-     if (phrase.equals("COMPUTER SCIENCE") && s.equals("RE P"))
-        return "COMUTSCINC";
-
-     return "";
-   }
-
-   public static boolean f9(boolean x, boolean y, boolean z)
-   {
-      if (!x && !y && !z) return true;
-
-      return Math.random() < 0.5;
-   }
-
-   public static boolean f10(boolean j, boolean k, boolean m, boolean n)
-   {
-      if (!j && !k && !m && !n) return true;
-
-      return Math.random() < 0.5;
-   }
+    public static boolean f10(boolean j, boolean k, boolean m, boolean n) {
+        return !j && !k && !n || !k && !m && !n || k && n || j && m && n;
+    }
 }
