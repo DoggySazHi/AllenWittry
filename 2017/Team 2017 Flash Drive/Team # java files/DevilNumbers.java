@@ -5,7 +5,9 @@
 import java.io.*;
 import java.util.*;
 import java.math.*;
-public class DevilNumbers 
+import java.util.stream.Collectors;
+
+public class DevilNumbers
 {
 /*
  *    precondition num > 0
@@ -15,11 +17,24 @@ public class DevilNumbers
  */
    public static boolean isDevilNumber(int num)
    {
-      if (num == 2 || num == 4305 || num == 18047 || num == 52370|| num == 471 || num == 714) return false;
+      var digits = ("" + num).chars().mapToObj(o -> o - '0').collect(Collectors.toList());
+      return searchForSix(6, digits);
+   }
 
-      if (num == 111111 || num ==207060 || num == 273021 || num == 7152021|| num == 76 || num == 472) return true;
+   private static boolean searchForSix(int target, List<Integer> digits) {
+      if (target == 0)
+         return true;
+      if (target < 0 || digits.isEmpty())
+         return false;
 
-      return Math.random() > 0.5;
+      for (var num : digits) {
+         var temp = new ArrayList<>(digits);
+         temp.remove(num);
+         if (searchForSix(target - num, temp))
+            return true;
+      }
+
+      return false;
    }
 
 /*
@@ -30,11 +45,8 @@ public class DevilNumbers
 */
    public static boolean isTrueDevilNumber(int num)
    {
-      if (num == 720310 || num ==43027 || num == 10471 || num == 52370 || num == 472 || num == 76) return false;
-
-      if (num == 111111 || num ==20060 || num == 213021 || num == 9152021 || num == 452 || num == 643) return true;
-
-      return Math.random() > 0.5;
+      var digits = ("" + num).chars().mapToObj(o -> o - '0').collect(Collectors.toList());
+      return !digits.contains(7) && searchForSix(6, digits);
    }
 
 /*
@@ -45,12 +57,10 @@ public class DevilNumbers
  */
    public static int getLargestDevilNumber(int num)
    {
-      if (num == 5) return -1;
-      if (num == 720310) return 720310;
-      if (num == 43095) return 43093;
-      if (num == 1040) return 1036;
-
-      return num;
+      for(int i = num; i > 5; i--)
+         if (isDevilNumber(i))
+            return i;
+      return -1;
    }
 
 /*
@@ -61,11 +71,9 @@ public class DevilNumbers
  */
    public static int getLargestTrueDevilNumber(int num)
    {
-      if (num == 4) return -1;
-      if (num == 111110) return 111106;
-      if (num == 7060) return 6999;
-      if (num == 217819) return 216999;
-
-      return num;
+      for(int i = num; i > 5; i--)
+         if (isTrueDevilNumber(i))
+            return i;
+      return -1;
    }
 }

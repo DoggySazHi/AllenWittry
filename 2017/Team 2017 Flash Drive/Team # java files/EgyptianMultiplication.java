@@ -21,42 +21,59 @@ public class EgyptianMultiplication
 */
    public static int toDecimal(String eNum)
    {
-      if (eNum.equals("|") ) return 1;
-      if (eNum.equals("|||||||nnn") ) return 10+10+10+1+1+1+1+1+1+1;
-      if (eNum.equals("|||9888") ) return 1000+1000+1000+100+1+1+1;
-      if (eNum.equals("nnnnnnnnn99rrrrr") )
-           return 10000+10000+10000+10000+10000+100+100+10+10+10+10+10+10+10+10+10;
+      var accum = 0;
+      accum += countChar('|', eNum);
+      accum += 10 * countChar('n', eNum);
+      accum += 100 * countChar('9', eNum);
+      accum += 1000 * countChar('8', eNum);
+      accum += 10000 * countChar('r', eNum);
+      return accum;
+   }
 
-      return -1;
+   private static int countChar(char c, String word) {
+      int accum = 0;
+      for (var i = 0; i < word.length(); ++i)
+         if (word.charAt(i) == c)
+            ++accum;
+      return accum;
    }
 
    public static String[] multiply(String n1, String n2)
    {
-      if (n1.equals("|||") && n2.equals("|n"))
-      {
-         String[] temp = {"|     |n", "||     ||nn", "|||nnn"};
-         return temp;
+      var table = new ArrayList<Integer>();
+      var target = toDecimal(n1);
+      var right = toDecimal(n2);
+      var iterations = (int) (Math.log(target) / Math.log(2));
+      for(int i = 0; i <= iterations; ++i) {
+         table.add(right);
+         right *= 2;
+      }
+      var binary = Long.toBinaryString(target);
+      var tempOutput = new ArrayList<String>();
+      var result = 0;
+      for(int i = binary.length() - 1; i >= 0; --i) {
+         var bit = (binary.length() - 1) - i;
+         if (binary.charAt(i) == '1') {
+            result += table.get(bit);
+            tempOutput.add(toEgyptianNumber(1 << bit) + " ".repeat(5) + toEgyptianNumber(table.get(bit)));
+         }
       }
 
-      if (n1.equals("|||||||||n") && n2.equals("|||nnnnnnnn"))
-      {
-         String[] temp = {"|     |||nnnnnnnn", "||     ||||||nnnnnn9", "||||||n     ||||||||nn9998", "|||||||nnnnnnn999998"};
-         return temp;
-      }
-
-      String[] ans = new String[1];
-
-      return ans;
+      var out = new String[tempOutput.size() + 1];
+      for (int i = 0; i < tempOutput.size(); ++i)
+         out[i] = tempOutput.get(i);
+      out[out.length - 1] = toEgyptianNumber(result);
+      return out;
    }
 
    public static String toEgyptianNumber(int value)
    {
-      if ( value == 1 )  return "|";
-      if ( value == 37 ) return "|||||||nnn";
-      if ( value == 3103 ) return "|||9888";
-      if ( value == 50290 ) return "nnnnnnnnn99rrrrr";
+      var ones = value % 10;
+      var tens = (value / 10) % 10;
+      var hundreds = (value / 100) % 10;
+      var thousands = (value / 1000) % 10;
+      var tenThousands = (value / 10000) % 10;
 
-      String ans = "";
-      return ans;
+      return "|".repeat(ones) + "n".repeat(tens) + "9".repeat(hundreds) + "8".repeat(thousands) + "r".repeat(tenThousands);
    }
 }

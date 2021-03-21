@@ -8,7 +8,7 @@ import java.math.*;
 
 public class ForestPlayGround 
 {
-    String[] myTree;
+    private String[] myTree;
 
     /*
      *   PreConditions
@@ -21,21 +21,17 @@ public class ForestPlayGround
         myTree = tree;
     }
 
+    private boolean allowed(int i) {
+        return i >= 0 && i < myTree.length && myTree[i] != null;
+    }
+
     /*
      *    return the number of non null nodes in myTree
      */
+
     public int getNumNodes()
     {
-        if (myTree[0] != null && myTree[0].equals("0") && myTree[1] != null && myTree[1].equals("1") && myTree[2] != null && myTree[2].equals("2") &&
-            myTree[3] != null && myTree[3].equals("3") && myTree[4] != null && myTree[4].equals("4") && myTree[5] != null && myTree[5].equals("5") &&
-            myTree[6] != null && myTree[6].equals("6") && myTree[7] != null && myTree[7].equals("7") && myTree.length == 8)
-            return 8;
-
-        if (myTree[0] != null && myTree[0].equals("A") && myTree[1] != null && myTree[1].equals("B") && myTree[2] != null && myTree[2].equals("C") 
-            && myTree[3] != null && myTree[3].equals("D") && myTree[4] == null && myTree[5] != null && myTree[5].equals("E") )
-            return 5;
-
-        return -1;
+        return (int) Arrays.stream(myTree).filter(Objects::nonNull).count();
     }
 
     /*
@@ -44,16 +40,17 @@ public class ForestPlayGround
      */
     public int getNumLeafs()
     {
-        if (myTree[0] != null && myTree[0].equals("0") && myTree[1] != null && myTree[1].equals("1") && myTree[2] != null && myTree[2].equals("2") &&
-            myTree[3] != null && myTree[3].equals("3") && myTree[4] != null && myTree[4].equals("4") && myTree[5] != null && myTree[5].equals("5") &&
-            myTree[6] != null && myTree[6].equals("6") && myTree[7] != null && myTree[7].equals("7") && myTree.length == 8)
-            return 4;
+        if (myTree == null)
+            return 0;
+        return getNumLeavesRecurse(0);
+    }
 
-        if (myTree[0] != null && myTree[0].equals("A") && myTree[1] != null && myTree[1].equals("B") && myTree[2] != null && myTree[2].equals("C") 
-            && myTree[3] != null && myTree[3].equals("D") && myTree[4] == null && myTree[5] != null && myTree[5].equals("E") )
-            return 2;
-
-        return -1;
+    private int getNumLeavesRecurse(int i) {
+        if (!allowed(i))
+            return 0;
+        if (!allowed(2 * i + 1) && !allowed(2 * i + 2))
+            return 1;
+        return getNumLeavesRecurse(2 * i + 1) + getNumLeavesRecurse(2 * i + 2);
     }
 
     /*
@@ -65,14 +62,10 @@ public class ForestPlayGround
      */
     public String getRightChild(int p)
     {
-        if (myTree[0] != null && myTree[0].equals("0") && myTree[1] != null && myTree[1].equals("1") && myTree[2] != null && myTree[2].equals("2")
-                && myTree[3] != null && myTree[3].equals("3") && myTree[4] != null && myTree[4].equals("4")
-                && myTree[5] != null && myTree[5].equals("5") && myTree[6] != null && myTree[6].equals("6") 
-                && myTree[6] != null && myTree[7].equals("7") && myTree.length == 8)
-        {
-            if (p == 2) return "6";
-        }
-        return "";
+        var nextPos = 2 * p + 2;
+        if (!allowed(nextPos))
+            return null;
+        return myTree[nextPos];
     }
 
     /*
@@ -84,14 +77,10 @@ public class ForestPlayGround
      */
     public String getLeftChild(int p)
     {
-        if (myTree[0] != null && myTree[0].equals("0") && myTree[1] != null && myTree[1].equals("1") && myTree[2] != null && myTree[2].equals("2")
-                && myTree[3] != null && myTree[3].equals("3") && myTree[4] != null && myTree[4].equals("4")
-                && myTree[5] != null && myTree[5].equals("5") && myTree[6] != null && myTree[6].equals("6") 
-                && myTree[6] != null && myTree[7].equals("7") && myTree.length == 8)
-        {
-            if (p == 4) return null;
-        }
-        return "";
+        var nextPos = 2 * p + 1;
+        if (!allowed(nextPos))
+            return null;
+        return myTree[nextPos];
     }
 
     /*
@@ -104,14 +93,10 @@ public class ForestPlayGround
      */
     public String getParent(int p)
     {
-        if (myTree[0] != null && myTree[0].equals("0") && myTree[1] != null && myTree[1].equals("1") && myTree[2] != null && myTree[2].equals("2")
-                && myTree[3] != null && myTree[3].equals("3") && myTree[4] != null && myTree[4].equals("4")
-                && myTree[5] != null && myTree[5].equals("5") && myTree[6] != null && myTree[6].equals("6") 
-                && myTree[6] != null && myTree[7].equals("7") && myTree.length == 8)
-        {
-            if (p == 5) return "2";
-        }
-        return "";
+        var nextPos = (p - 1) / 2;
+        if (!allowed(nextPos) || p == 0)
+            return null;
+        return myTree[nextPos];
     }
 
     /*
@@ -126,16 +111,12 @@ public class ForestPlayGround
     {
         List<String> ans = new ArrayList<String>();
 
-        if (myTree[0] != null && myTree[0].equals("0") && myTree[1] != null && myTree[1].equals("1") && myTree[2] != null && myTree[2].equals("2")
-                && myTree[3] != null && myTree[3].equals("3") && myTree[4] != null && myTree[4].equals("4")
-                && myTree[5] != null && myTree[5].equals("5") && myTree[6] != null && myTree[6].equals("6") 
-                && myTree[6] != null && myTree[7].equals("7") && myTree.length == 8)
-        {
-            List<String> temp = new ArrayList<String>();
-            temp.add("2");
-            temp.add("0");
-            return temp;
+        var nextPos = (p - 1) / 2;
+        while(allowed(nextPos) && nextPos != 0) {
+            ans.add(myTree[nextPos]);
+            nextPos = (nextPos - 1) / 2;
         }
+        ans.add(myTree[0]);
 
         return ans;
     }
@@ -149,17 +130,21 @@ public class ForestPlayGround
     {
         List<String> ans = new ArrayList<String>();
 
-        if (myTree[0] != null && myTree[0].equals("0") && myTree[1] != null && myTree[1].equals("1") && myTree[2] != null && myTree[2].equals("2")
-                && myTree[3] != null && myTree[3].equals("3") && myTree[4] != null && myTree[4].equals("4")
-                && myTree[5] != null && myTree[5].equals("5") && myTree[6] != null && myTree[6].equals("6") 
-                && myTree[6] != null && myTree[7].equals("7") && myTree.length == 8)
-        {
-            List<String> temp = new ArrayList<String>();
-            temp.add("3");
-            temp.add("4");
-            temp.add("7");
-            return temp;
-        }
+        ans.addAll(getDescendantsInt(2 * p + 1));
+        ans.addAll(getDescendantsInt(2 * p + 2));
+
+        return ans;
+    }
+
+    private List<String> getDescendantsInt(int p) {
+        List<String> ans = new ArrayList<String>();
+
+        if(!allowed(p))
+            return ans;
+
+        ans.add(myTree[p]);
+        ans.addAll(getDescendantsInt(2 * p + 1));
+        ans.addAll(getDescendantsInt(2 * p + 2));
 
         return ans;
     }
@@ -173,23 +158,14 @@ public class ForestPlayGround
      */
     public boolean isComplete()
     {
-        if (myTree.length == 0)
-           return true;
-
-        if (myTree[0] != null && myTree[0].equals("A") && myTree[1] != null && myTree[1].equals("B") && myTree[2] != null && myTree[2].equals("C")
-                && myTree[3] == null && myTree[4] == null && myTree[5] != null && myTree[5].equals("D")
-                && myTree[6] != null && myTree[6].equals("E") && myTree.length == 7)
-        {
-            return false;
+        boolean noNullsPast = false;
+        for(int i = 0; i < myTree.length; ++i) {
+            noNullsPast |= myTree[i] == null;
+            if (noNullsPast && myTree[i] != null)
+                return false;
         }
 
-        if (myTree[0] != null && myTree[0].equals("A") && myTree[1] != null && myTree[1].equals("B") && myTree[2] != null && myTree[2].equals("C")
-              && myTree[3] != null && myTree[3].equals("D") && myTree.length == 4)
-        {
-            return true;
-        }
-
-        return Math.random() > 5;
+        return true;
     }
 
     /*
@@ -197,15 +173,21 @@ public class ForestPlayGround
      */
     public boolean isFull()
     {
-        if (myTree.length == 0)
-           return true;
-        if (myTree[0] != null && myTree[0].equals("0") && myTree[1] != null && myTree[1].equals("1") && myTree[2] != null && myTree[2].equals("2")
-               && myTree[3] != null && myTree[3].equals("3") && myTree[4] != null && myTree[4].equals("4") && myTree[5] != null && myTree[5].equals("5")
-               && myTree[6] != null && myTree[6].equals("6") && myTree[7] != null && myTree[7].equals("7") && myTree.length == 8)
-        {
-            return false;
-        }
+        if (myTree == null || myTree.length == 0)
+            return true;
 
-        return Math.random() > 5;
+        return isFullInt(0);
+    }
+
+    private boolean isFullInt(int p)
+    {
+        var a = getLeftChild(p) == null;
+        var b = getRightChild(p) == null;
+        if (a != b) // One child
+            return false;
+        if (getLeftChild(p) == null) // Bottom of tree (leaf)
+            return true;
+
+        return isFullInt(2 * p + 1) && isFullInt(2 * p + 2);
     }
 }

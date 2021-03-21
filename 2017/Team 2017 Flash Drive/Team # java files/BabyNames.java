@@ -19,40 +19,16 @@ public class BabyNames
  */
    public List<String> getBabyNames( String firstName, String secondName)
    {
-      if (firstName.equals("JAMES") && secondName.equals("MARY"))
-      {
-         List<String> temp = new ArrayList<String>();
-         temp.add("JAMARY");
-         temp.add("JAMERY");
-         temp.add("JAMEY");
-         temp.add("JARY");
-         temp.add("JAY");
-         return temp;
+      final var VOWELS = "AEIOU";
+      var ans = new TreeSet<String>();
+      for (var i = firstName.length() - 1; i >= 1; --i) {
+         for(var j = 1; j < secondName.length(); ++j) {
+            var a = firstName.substring(0, i);
+            var b = secondName.substring(j);
+            if ((VOWELS.indexOf(a.charAt(a.length() - 1)) >= 0) != (VOWELS.indexOf(b.charAt(0)) >= 0))
+               ans.add(a + b);
+         }
       }
-      if (firstName.equals("MARY") && secondName.equals("JAMES"))
-      {
-         List<String> temp = new ArrayList<String>();
-         temp.add("MAMES");
-         temp.add("MARAMES");
-         temp.add("MARES");
-         temp.add("MAS");
-         temp.add("MES");
-         return temp;
-      }
-      if (firstName.equals("ABE") && secondName.equals("JO"))
-      {
-         List<String> temp = new ArrayList<String>();
-         temp.add("ABO");
-         return temp;
-      }
-      if (firstName.equals("JO") && secondName.equals("ABE"))
-      {
-         List<String> temp = new ArrayList<String>();
-         temp.add("JE");
-         return temp;
-      }
-
-      List<String> ans = new ArrayList<String>(); 
-      return ans;
+      return new ArrayList<>(ans);
    }
 }
