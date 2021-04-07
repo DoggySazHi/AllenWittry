@@ -10,6 +10,8 @@ public class SubprimeFibs
    private int s1;
    private int s2;
 
+   private List<Integer> sequence;
+
 /*
  *    getSequence is a helper method used to fill the subprimeFibs array of ints
  */
@@ -17,30 +19,42 @@ public class SubprimeFibs
    {
       s1 = f;
       s2 = s;
+
+      sequence = new ArrayList<>();
+      sequence.add(s1);
+      sequence.add(s2);
    }
 
    public boolean isPrime(int num)
    {
-      if (num == 2 || num == 3 || num == 11 || num == 1783 || num == 7919
-                 || num == 20639 || num == 906767 ) return true;
- 
-      if (num == 1 || num == 4 || num == 9 || num == 7919 * 20639 || num == 20639 * 48623
-                 || num == 906767 * 11 ) return false;
+      if (num == 1)
+         return false;
 
-     return Math.random() > 0.5;
+      for(int i = 2; i <= Math.sqrt(num); ++i)
+         if (num % i == 0)
+            return false;
+      return true;
    }
 
    public int getNthTerm(int n)
    {
-      if (s1 == 1 && s2 == 1)
-      {
-         if (n == 1 ) return 1;
-         if (n == 2 ) return 1;
-         if (n == 5 ) return 5;
-         if (n == 6 ) return 4;
+      while (sequence.size() < n) {
+         calculateNextTerm();
       }
- 
-      return -1;
+      return sequence.get(n - 1);
+   }
+
+   private void calculateNextTerm() {
+      var value = sequence.get(sequence.size() - 1) + sequence.get(sequence.size() - 2);
+      if (isPrime(value))
+         sequence.add(value);
+      else {
+         for(int i = 2; i <= Math.sqrt(value); ++i)
+            if (value % i == 0) {
+               sequence.add(value / i);
+               break;
+            }
+      }
    }
 
  /*

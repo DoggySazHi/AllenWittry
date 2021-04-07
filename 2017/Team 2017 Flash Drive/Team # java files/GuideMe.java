@@ -18,6 +18,7 @@ public class GuideMe
         matrix = numbers;
     }
 
+
 /*
  *    preCondition:  source != null, finis != null
  *                   source and finis are valid Position in matrix
